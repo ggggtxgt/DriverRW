@@ -1,10 +1,10 @@
-#include <ntifs.h>
+#include "util.h"
 
 void DriverUnload(PDRIVER_OBJECT pDriver) {
 
 }
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
-	pDriver->DriverUnload = DriverUnload;
-	return STATUS_SUCCESS;
+    pDriver->DriverUnload = DriverUnload;
+    return STATUS_SUCCESS;
 }
