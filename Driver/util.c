@@ -1,5 +1,41 @@
 #include "util.h"
 
+// 保存原始回调函数指针
+MyAttributeInofrmationCallback OldQueryCallback = NULL;
+MyAttributeInofrmationCallback OldSetCallback = NULL;
+
+// 自定义查询回调函数
+NTSTATUS DrawQueryCallback(HANDLE handle, PVOID addr) {
+    PMESSAGE_PACKAGE message = (PMESSAGE_PACKAGE)addr;
+    if (MmIsAddressValid(addr)) {
+        // 标志正确，调用自定义回调函数
+        if (1234 == message->falg) {
+            DbgPrint("已收到三环请求: ");
+            return STATUS_SUCCESS;
+        } else {
+            // 标志错误，调用原始回调函数处理
+            return OldQueryCallback(handle, addr);
+        }
+    }
+    return STATUS_SUCCESS;
+}
+
+// 自定义设置回调函数
+NTSTATUS DrawSetCallback(HANDLE handle, PVOID addr) {
+    PMESSAGE_PACKAGE message = (PMESSAGE_PACKAGE)addr;
+    if (MmIsAddressValid(addr)) {
+        // 标志正确，调用自定义回调函数
+        if (1234 == message->falg) {
+            DbgPrint("已收到三环请求: ");
+            return STATUS_SUCCESS;
+        } else {
+            // 标志错误，调用原始回调函数处理
+            return OldSetCallback(handle, addr);
+        }
+    }
+    return STATUS_SUCCESS;
+}
+
 NTSTATUS RegisterCallBack() {
     // 获取 ExRegisterAttributeInformationCallback 函数地址
     UNICODE_STRING funcName = {0};
@@ -7,4 +43,25 @@ NTSTATUS RegisterCallBack() {
     PVOID funcAddr = MmGetSystemRoutineAddress(&funcName);
     ULONG64 offset = *(PULONG)((ULONG64) funcAddr + 0x10);
     PULONG64 attr_info_addr = ((ULONG64) funcAddr + 0xd + 7 + offset);
+
+    // 保存原函数信息
+    OldQueryCallback = attr_info_addr[0];
+    OldSetCallback = attr_info_addr[1];
+
+    // 清空原函数信息
+    attr_info_addr[0] = 0;
+    attr_info_addr[1] = 0;
+
+    // 注册自定义回调函数
+    _ExRegisterAttributeInfomationCallback registerAttributeInfomationCallback = funcAddr;
+    RWCALL_BACK_FUNC rwCallBackFunc = {0};
+    rwCallBackFunc.ExDisQueryAttributeInformation = DrawQueryCallback;
+    rwCallBackFunc.ExDisSetAttributeInformation = DrawSetCallback;
+    NTSTATUS result = registerAttributeInfomationCallback(&rwCallBackFunc);
+    if (NT_SUCCESS(result)) {
+        DbgPrint("注册成功!");
+    } else {
+        DbgPrint("注册失败!");
+    }
+    return result;
 }
