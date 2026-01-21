@@ -4,9 +4,12 @@
 typedef NTSTATUS(*MyAttributeInofrmationCallback)(HANDLE handle, PVOID arg);
 // 注册回调函数
 NTSTATUS RegisterCallBack();
+// 卸载回调函数
+void UnRegisterCallBack();
 
 // 驱动-应用层通信的数据包结构
 typedef struct _MESSAGE_PACKAGE {
+    ULONG64 func;   // 需要调用的函数（需要完成的操作）
     ULONG64 falg;   // 通信标志（用于区分是否为自定义通信）
     ULONG64 data;   // 通信传递的数据（通常为内存地址）
     ULONG64 size;   // 数据的长度
@@ -21,3 +24,6 @@ typedef struct _RWCALL_BACK_FUNC {
 }RWCALL_BACK_FUNC, *PRWCALL_BACK_FUNC;
 typedef NTSTATUS(*_ExRegisterAttributeInfomationCallback)(PRWCALL_BACK_FUNC arg);
 // *********************************************************************************
+
+// 分配各种回调函数
+NTSTATUS DispatchCallEntry(PMESSAGE_PACKAGE package);
