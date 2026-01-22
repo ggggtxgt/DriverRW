@@ -15,3 +15,6 @@
 NTSTATUS ReadR3Memory(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
 NTSTATUS ReadR3MemoryByCr3(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
 NTSTATUS ReadR3MemoryByVirtualMemory(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
+PVOID RwMapMemory(PVOID toAddress, ULONG buffSize, PMDL* pMdl);     // 进行内存映射
+void RwMapUnMemory(PVOID toAddress, PMDL pMdl);						// 取消内存映射
+NTSTATUS ReadR3MemoryByMdl(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
