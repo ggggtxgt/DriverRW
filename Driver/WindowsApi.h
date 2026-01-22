@@ -11,3 +11,6 @@ NTSTATUS MmCopyVirtualMemory(
     IN KPROCESSOR_MODE PreviousMode,
     OUT PSIZE_T NumberOfBytesCopied
 );
+
+// 获取32位程序PEB
+void* PsGetProcessWow64Process(PEPROCESS process);

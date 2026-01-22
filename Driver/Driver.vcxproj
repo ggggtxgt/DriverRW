@@ -153,10 +153,12 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="MemoryRW.c" />
+    <ClCompile Include="RwGetModule.c" />
     <ClCompile Include="util.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryRW.h" />
+    <ClInclude Include="RwGetModule.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="WindowsApi.h" />
   </ItemGroup>

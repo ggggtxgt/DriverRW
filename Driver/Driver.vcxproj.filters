@@ -28,6 +28,9 @@
     <ClCompile Include="MemoryRW.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RwGetModule.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
@@ -37,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WindowsApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RwGetModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
