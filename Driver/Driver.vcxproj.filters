@@ -36,5 +36,8 @@
     <ClInclude Include="MemoryRW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsDefineApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

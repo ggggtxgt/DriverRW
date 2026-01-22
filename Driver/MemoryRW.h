@@ -1,5 +1,7 @@
 #pragma once
 
+#include "WindowsApi.h"
+
 #include <ntifs.h>
 
 /******************************************************************************
@@ -11,3 +13,4 @@
  * @return NTSTATUS 状态码，STATUS_SUCCESS表示成功
 *****************************************************************************/
 NTSTATUS ReadR3Memory(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
+NTSTATUS ReadR3MemoryByCr3(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);

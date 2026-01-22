@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="MemoryRW.h" />
     <ClInclude Include="util.h" />
+    <ClInclude Include="WindowsDefineApi.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
