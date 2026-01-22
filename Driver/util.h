@@ -7,6 +7,14 @@ NTSTATUS RegisterCallBack();
 // 卸载回调函数
 void UnRegisterCallBack();
 
+// 用于读写内存
+typedef struct _RWMM {
+    ULONG64 pId;        // 进程号
+    ULONG64 startAddr;  // 读取的起始地址
+    ULONG64 size;       // 读取的大小
+    ULONG64 destAddr;   // 存储已读取内存的缓冲区
+}RWMM, *PRWMM;
+
 // 驱动-应用层通信的数据包结构
 typedef struct _MESSAGE_PACKAGE {
     ULONG64 func;   // 需要调用的函数（需要完成的操作）

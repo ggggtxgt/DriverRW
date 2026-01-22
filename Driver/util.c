@@ -1,4 +1,5 @@
 #include "util.h"
+#include "MemoryRW.h"
 
 // 保存原始回调函数指针
 MyAttributeInofrmationCallback OldQueryCallback = NULL;
@@ -46,7 +47,17 @@ NTSTATUS DrawSetCallback(HANDLE handle, PVOID addr) {
 }
 
 NTSTATUS DispatchCallEntry(PMESSAGE_PACKAGE package) {
-    return STATUS_SUCCESS;
+    NTSTATUS status = STATUS_SUCCESS;
+    switch (package->func) {
+        case 1: {
+            PRWMM rwmm = (PRWMM) package->data;
+            status = (rwmm->pId, rwmm->startAddr, rwmm->size, rwmm->destAddr);
+        }
+
+        default:
+            break;
+    }
+    return status;
 }
 
 NTSTATUS RegisterCallBack() {

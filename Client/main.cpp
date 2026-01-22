@@ -10,8 +10,17 @@ typedef struct _IO_STATUS_BLOCK {
     ULONG_PTR Information;   // 操作返回的附加信息
 } IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
 
+// 用于读写内存
+typedef struct _RWMM {
+    ULONG64 pId;        // 进程号
+    ULONG64 startAddr;  // 读取的起始地址
+    ULONG64 size;       // 读取的大小
+    ULONG64 destAddr;   // 存储已读取内存的缓冲区
+}RWMM, * PRWMM;
+
 // 驱动-应用层通信的数据包结构
 typedef struct _MESSAGE_PACKAGE {
+    ULONG64 func;   // 需要调用的函数（需要完成的操作）
     ULONG64 flag;   // 通信标志（用于区分是否为自定义通信）
     ULONG64 data;   // 通信传递的数据（通常为内存地址）
     ULONG64 size;   // 数据的长度
@@ -22,6 +31,16 @@ typedef struct _MESSAGE_PACKAGE {
 typedef LONG(*_NtQueryInformationFile)(HANDLE FileHandle, PIO_STATUS_BLOCK IlStatusBlock, PVOID FileInformation, ULONG Length, LONG FileInformationClass);
 
 int main() {
+    HWND hwdn = FindWindowA(NULL, "Fate鼠标精灵");
+    DWORD piid = 0;
+    GetWindowThreadProcessId(hwdn, &piid);
+    PRWMM rwmm = (PRWMM)malloc(sizeof(RWMM));
+    memset(rwmm, 0, sizeof(RWMM));
+    ULONG64 readData = 0;
+    rwmm->pId = piid;
+    rwmm->startAddr = 0x400000;
+    rwmm->destAddr = (ULONG64)&readData;
+    rwmm->size = sizeof(ULONG64);
     // 获取 _NtQueryInformationFile 函数地址
     _NtQueryInformationFile myQueryInformationFile = NULL;
     myQueryInformationFile = (_NtQueryInformationFile) GetProcAddress(GetModuleHandleA("ntdll.dll"), "NtQueryInformationFile");
@@ -34,10 +53,11 @@ int main() {
     char fileBuffer[0XE0] = {0};            // 224字节的缓冲区
     PMESSAGE_PACKAGE message = (PMESSAGE_PACKAGE) fileBuffer;
     message->flag = 1234;
-
+    message->func = 1;
+    message->data = (ULONG64)rwmm;
     // 触发驱动层回调函数
     myQueryInformationFile(hFile, &ioStatusBlock, fileBuffer, 0xE0, 0x34);
-
+    printf("R0读取得到的数据为：%d\n", readData);
     system("pause");
     return 0;
 }
