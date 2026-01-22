@@ -21,12 +21,14 @@ ULONG64 RwGetModuleHandle(HANDLE pId, char *dllName) {
     KeStackAttachProcess(process, &state);  // 进程挂靠
 
     // 获取 PEB 地址
-    PPEB32 pEb32 = PsGetCurrentProcess();
+    PPEB32 pEb32 = PsGetProcessWow64Process(process);
     if (NULL == pEb32) {
         KeUnstackDetachProcess(&state);
         ObDereferenceObject(process);
         return 0;
     }
+
+    // PPEB64 pEb64 = PsGetProcesspeb(process);
 
     // 锁定内存
     SIZE_T realRead = 0;
@@ -50,6 +52,7 @@ ULONG64 RwGetModuleHandle(HANDLE pId, char *dllName) {
         RtlInitUnicodeString(&udllName, wstr);
         if (0 == RtlCompareUnicodeString(&unicodeStr, &udllName, TRUE)) {
             dllBase = (ULONG64) listEntryNext->DllBase;
+            break;
         }
         listEntryNext = listEntryNext->InLoadOrderLinks.Flink;
     }

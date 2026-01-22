@@ -41,8 +41,8 @@ typedef struct _LDR_DATA_TABLE_ENTRY32 {
     ULONG DllBase;
     ULONG EntryPoint;
     ULONG SizeOrImage;
-    struct _UNICODE_STRING FullDllName;
-    struct _UNICODE_STRING BaseDllName;
+    UNICODE_STRING32 FullDllName;
+    UNICODE_STRING32 BaseDllName;
     ULONG Flags;
     USHORT LoadCount;
     USHORT TlsIndex;
