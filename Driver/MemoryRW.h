@@ -14,3 +14,4 @@
 *****************************************************************************/
 NTSTATUS ReadR3Memory(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
 NTSTATUS ReadR3MemoryByCr3(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
+NTSTATUS ReadR3MemoryByVirtualMemory(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);

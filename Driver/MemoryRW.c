@@ -108,7 +108,7 @@ NTSTATUS ReadR3MemoryByCr3(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID dest
     ULONG64 targetCr3 = *(ULONG64 * )((ULONG64) pTargetProcess + 0x28);
     // 修改当前进程CR3
     KeEnterCriticalRegion();    // 关闭 APC
-    _diable();                  // 关闭中断
+    _disable();                 // 关闭中断
     __writecr3(targetCr3);
     if (!(MmIsAddressValid(startAddr) && MmIsAddressValid((ULONG64) startAddr + size))) {
         __writecr3(curCr3);
@@ -127,4 +127,53 @@ NTSTATUS ReadR3MemoryByCr3(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID dest
     ExFreePool(buff);
     ObDereferenceObject(pTargetProcess);
     return STATUS_SUCCESS;
+}
+
+NTSTATUS ReadR3MemoryByVirtualMemory(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr) {
+    // 检查传入的参数有效性，避免系统崩溃
+    {
+        // 判断读取的起始地址是否为驱动层地址
+        if ((ULONG64) startAddr > (ULONG64) MmHighestUserAddress ||
+            (ULONG64) startAddr + size > (ULONG64) MmHighestUserAddress ||
+            (ULONG64) startAddr + size < (ULONG64) startAddr) {
+            // 错误：无效的内存地址
+            return STATUS_ACCESS_VIOLATION;
+        }
+        if (0 == size) {
+            // 错误：第3个参数无效
+            return STATUS_INVALID_PARAMETER_3;
+        }
+        if (NULL == destAddr) {
+            // 错误：第4个参数无效
+            return STATUS_INVALID_PARAMETER_4;
+        }
+    }
+
+    // 获取目标进程 EPROCESS 对象
+    PEPROCESS pTargetProcess;
+    NTSTATUS status = PsLookupProcessByProcessId(pId, &pTargetProcess);
+    if (!NT_SUCCESS(status)) {
+        return status;
+    }
+    if (PsGetProcessExitStatus(pTargetProcess) != 0x103) {
+        ObDereferenceObject(pTargetProcess);    // 释放进程引用次数
+        // 错误：第1个参数错误--无效的进程ID
+        return STATUS_INVALID_PARAMETER_1;
+    }
+
+    // 分配临时缓冲区
+    PVOID buff = ExAllocatePool(NonPagedPool, size);
+    if (NULL == buff) {
+        ObDereferenceObject(pTargetProcess);
+        return STATUS_UNSUCCESSFUL;
+    }
+
+    // 附加到目标进程地址空间
+    RtlZeroMemory(buff, size);
+    SIZE_T readSize = 0;
+    status = MmCopyVirtualMemory(pTargetProcess, startAddr, IoGetCurrentProcess(), buff, size, UserMode, &readSize);
+
+    ExFreePool(buff);
+    ObDereferenceObject(pTargetProcess);
+    return status;
 }
