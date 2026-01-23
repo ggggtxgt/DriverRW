@@ -151,12 +151,14 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GetModuleUtil.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="MemoryRW.c" />
     <ClCompile Include="RwGetModule.c" />
     <ClCompile Include="util.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GetModuleUtil.h" />
     <ClInclude Include="MemoryRW.h" />
     <ClInclude Include="RwGetModule.h" />
     <ClInclude Include="util.h" />
