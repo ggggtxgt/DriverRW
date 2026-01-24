@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include "resource.h"
 
+#include "comm.cpp"
+
 SC_HANDLE hManager = NULL;
 SC_HANDLE hService = NULL;
 
@@ -52,7 +54,7 @@ void LoadRes() {
     CloseHandle(hRsc);
 }
 
-int main() {
+int load() {
     LoadRes();
     char strName[20] = { 0 };
     RandomDriverName(strName, 19);

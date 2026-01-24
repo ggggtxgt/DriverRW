@@ -53,6 +53,11 @@ NTSTATUS DispatchCallEntry(PMESSAGE_PACKAGE package) {
             PRWMM rwmm = (PRWMM) package->data;
             status = (rwmm->pId, rwmm->startAddr, rwmm->size, rwmm->destAddr);
         }
+        case 2: {
+            PRWMM rwInfo = (PRWMM)package->data;
+            status = RwQueryVirtualMemory(rwInfo->pId, rwInfo->startAddr, rwInfo->destAddr);
+            break;
+        }
 
         default:
             break;
