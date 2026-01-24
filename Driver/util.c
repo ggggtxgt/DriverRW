@@ -94,6 +94,6 @@ NTSTATUS RegisterCallBack() {
 void UnRegisterCallBack() {
     if (uCallBack) {
         uCallBack[0] = OldSetCallback;      // 恢复设置回调
-        uCallBack[1] = OldQueryCallback;    // 万利查询回调
+        uCallBack[1] = OldQueryCallback;    // 恢复查询回调
     }
 }

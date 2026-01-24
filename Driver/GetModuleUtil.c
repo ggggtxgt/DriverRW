@@ -28,8 +28,9 @@ ULONG64 GetModuleBase(PCHAR moduleName) {
 			PCHAR fullName = moduleArray->FullPathName;
 			if (strstr(fullName, moduleName)) {
 				DbgPrint("找到指定模块!");
+				ULONG64 baseAddr = moduleArray->ImageBase;
 				ExFreePool(moduleBuff);
-				return moduleArray->ImageBase;
+				return baseAddr;
 			}
 			moduleArray++;
 		}
@@ -73,13 +74,13 @@ void ByteToHexStr(const unsigned char *source, char *dest, int sourceLen) {
 ULONG64 RwSearchCode(char* beginAddr, char* endAddr, char* code, ULONG codeLen) {
 	ULONG64 resultAddr = 0;
 	BOOLEAN cmpFlag = TRUE;
-	char* convertCode = ExAllocatePool(NonPagedPool, codeLen);
+	char* convertCode = ExAllocatePool(NonPagedPool, (codeLen + 2));
 	if (NULL == convertCode) {
 		return resultAddr;
 	}
 	for (size_t i = beginAddr; i < endAddr; i++) {
-		memset(convertCode, 0, codeLen);
-		ByteToHexStr(beginAddr, convertCode, codeLen);
+		memset(convertCode, 0, (codeLen + 2));
+		ByteToHexStr(beginAddr, convertCode, codeLen/2);
 		for (size_t j = 0; j < codeLen; j++) {
 			if ('?' == code || convertCode[j] == code) {
 				continue;

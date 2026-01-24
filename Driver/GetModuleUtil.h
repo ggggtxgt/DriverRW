@@ -63,8 +63,8 @@ typedef struct _RTL_PROCESS_MODULE_INFORMATION {
     HANDLE Section;
     PVOID MappedBase;
     PVOID ImageBase;
-    ULONG64 ImageSize;
-    ULONG64 Flags;
+    ULONG ImageSize;
+    ULONG Flags;
     USHORT LoadOrderIndex;
     USHORT InitOrderIndex;
     USHORT LoadCount;
