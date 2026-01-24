@@ -7,7 +7,6 @@ void DriverUnload(PDRIVER_OBJECT pDriver) {
 }
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
-    DbgBreakPoint();
     pDriver->DriverUnload = DriverUnload;
     RTL_OSVERSIONINFOW version = { 0 };
     version.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOW);
