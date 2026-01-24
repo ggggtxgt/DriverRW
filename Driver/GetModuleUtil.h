@@ -79,5 +79,10 @@ typedef struct _RTL_PROCESS_MODULES {
 
 // 该函数为导出函数，但无文档
 NTKERNELAPI NTSTATUS ZwQuerySystemInformation(ULONG64 SystemInformationClass, PVOID SystemInformation, ULONG64 SystemInformationlength, PULONG64 ReturnLength);
-
 ULONG64 GetModuleBase(PCHAR moduleName);
+// byte 转换为 十六进制字符
+void ByteToHexStr(const unsigned char* source, char* dest, int sourceLen);  
+// 通过特征码进行搜索
+ULONG64 RwSearchCode(char *beginAddr, char *endAddr, char *code, ULONG codeLen);
+// 通过特征码获取地址
+ULONG64 RwGetAddrByCode(char* code, ULONG codeLen);
