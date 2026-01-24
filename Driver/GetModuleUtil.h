@@ -7,68 +7,77 @@ typedef enum _SYSTEM_INFORMATION_CLASS {
     SystemProcessorInformation,
     SystemPerformanceInformation,
     SystemTimeOfDayInformation,
-    SystemPathInformation,
-    SystemProcessInformation,
-    SystemCallCountInformation,
-    SystemDeviceInformation,
-    SystemProcessorPerformanceInformation,
-    SystemFlagsInformation,
-    SystemCallTimeInformation,
+    SystemNotImplemented1,
+    SystemProcessesAndThreadsInformation,
+    SystemCal1Counts,
+    SystemConfigurationInformation,
+    SystemProcessorTimes,
+    SystenGlobalFlag,
+    SystemNotImplemented2,
     SystemModuleInformation,
-    SystemLocksInformation,
-    SystemStackTraceInformation,
-    SystemPagedPoolInformation,
-    SystemNonPagedPoolInformation,
+    SystemLockInformation,
+    SystemNotImplemented3,
+    SystemNotImplemented4,
+    SystemNotImplemented5,
     SystemHandleInformation,
-    SystemObjectInformation,
-    SystemPageFileInformation,
-    SystemVdmInstemulInformation,
-    SystemVdmBopInformation,
-    SystemFileCacheInformation,
+    SystemobjectInformation,
+    SystemPagefileInformation,
+    SystemInstructionEmulationCounts,
+    SystemInvalidInfoClass1,
+    SystemCacheInformation,
     SystemPoolTagInformation,
-    SystemInterruptInformation,
-    SystemDpcBehaviorInformation,
-    SystemFullMemoryInformation,
-    SystemLoadGdiDriverInformation,
-    SystemUnloadGdiDriverInformation,
-    SystemTimeAdjustmentInformation,
-    SystemSummaryMemoryInformation,
-    SystemNextEventIdInformation,
-    SystemEventIdsInformation,
+    SystemProcessorStatistics,
+    SystemDpcInformation,
+    SystemNotImplemented6,
+    SystemLoadImage,
+    SystemUnloadImage,
+    SystemTimeAdjustment,
+    SystemNotImplemented7,
+    SystemNotImplemented8,
+    SystemNotImplemented9,
     SystemCrashDumpInformation,
     SystemExceptionInformation,
     SystemCrashDumpStateInformation,
     SystemKernelDebuggerInformation,
     SystemContextSwitchInformation,
     SystemRegistryQuotaInformation,
-    SystemExtendServiceTableInformation,
-    SystemPrioritySeperation,
-    SystemPlugPlayBusInformation,
-    SystemDockInformation,
-    SystemPowerInformation,
-    SystemProcessorSpeedInformation,
-    SystemCurrentTimeZoneInformation,
-    SystemLookasideInformation
-} SYSTEM_INFORMATION_CLASS, * PSYSTEM_INFORMATION_CLASS;
+    SystemLoadAndCallImage,
+    SystemPrioritySeparation,
+    SystemNotImplemented10,
+    SystemNotImplemented11,
+    SystemInvalidInfoClass2,
+    SystemInvalidInfoClass3,
+    SystemTimeZoneInformation,
+    SystemLookasideInformation,
+    SystenSetTimeSlipEvent,
+    SystemCreateSession,
+    SystemDeleteSession,
+    SystemInvalidInfoClass4,
+    SystemRangeStartInformation,
+    SystemVerifierInformation,
+    SystemAddVerifier,
+    SystemSessionProcessesInformation
+} SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
 
 typedef struct _RTL_PROCESS_MODULE_INFORMATION {
     HANDLE Section;
     PVOID MappedBase;
     PVOID ImageBase;
-    ULONG ImageSize;
-    ULONG Flags;
+    ULONG64 ImageSize;
+    ULONG64 Flags;
     USHORT LoadOrderIndex;
     USHORT InitOrderIndex;
     USHORT LoadCount;
     USHORT OffsetToFileName;
     UCHAR FullPathName[256];
-} RTL_PROCESS_MODULE_INFORMATION, * PRTL_PROCESS_MODULE_INFORMATION;
+} RTL_PROCESS_MODULE_INFORMATION, *PRTL_PROCESS_MODULE_INFORMATION;
 
 typedef struct _RTL_PROCESS_MODULES {
-    ULONG NumberOfModules;
+    ULONG64 NumberofSections;
     RTL_PROCESS_MODULE_INFORMATION Modules[1];
-} RTL_PROCESS_MODULES, * PRTL_PROCESS_MODULES;
+} RTL_PROCESS_MODULES, *PRTL_PROCESS_MODULES;
 
 // 该函数为导出函数，但无文档
-NTKERNELAPI NTSTATUS ZwQuerySystemInformation(ULONG64 SystemInformaionClass, PVOID SystemInformation, ULONG64 YstemInformaionLength, PULONG64 ReturnLength);
+NTKERNELAPI NTSTATUS ZwQuerySystemInformation(ULONG64 SystemInformationClass, PVOID SystemInformation, ULONG64 SystemInformationlength, PULONG64 ReturnLength);
+
 ULONG64 GetModuleBase(PCHAR moduleName);
