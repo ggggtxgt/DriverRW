@@ -97,3 +97,38 @@ void UnRegisterCallBack() {
         uCallBack[1] = OldQueryCallback;    // 恢复查询回调
     }
 }
+
+NTSTATUS RwQueryVirtualMemory(HANDLE pId, ULONG64 baseAddr, PMYMEMORY_BASIC_INFORMATION baseInformation) {
+    NTSTATUS state = STATUS_SUCCESS;
+    if (NULL == baseInformation) {
+        return state;
+    }
+    PEPROCESS process = NULL;
+    state = PsLookupProcessByProcessId(pId, &process);
+    if (!NT_SUCCESS(state)) {
+        return state;
+    }
+    KAPC_STATE apcState = { 0 };
+    // 先进程挂靠，之后调用 ZwQueryVirtualMemory，如此就不会持有句柄
+    KeStackAttachProcess(process, &apcState);
+    PMEMORY_BASIC_INFORMATION information = ExAllocatePool(NonPagedPool, sizeof(MEMORY_BASIC_INFORMATION));
+    if (NULL == information) {
+        return STATUS_UNSUCCESSFUL;
+    }
+    memset(information, 0, sizeof(MEMORY_BASIC_INFORMATION));
+    SIZE_T realSize = 0;
+    state = ZwQueryVirtualMemory(NtCurrentProcess(), baseAddr, MemoryBasicInformation, information, sizeof(MEMORY_BASIC_INFORMATION), &realSize);
+    KeUnstackDetachProcess(&apcState);
+    if (NT_SUCCESS(state)) {
+        baseInformation->AllocationBase = information->AllocationBase;
+        baseInformation->AllocationProtect = information->AllocationProtect;
+        baseInformation->BaseAddress = information->BaseAddress;
+        baseInformation->Protect = information->Protect;
+        baseInformation->ReginSize = information->RegionSize;
+        baseInformation->State = information->State;
+        baseInformation->Type = information->Type;
+    }
+    ObDereferenceObject(process);
+    ExFreePool(information);
+    return state;
+}

@@ -1,5 +1,8 @@
 #pragma once
 #include <ntifs.h>
+
+#include "structure.h"
+
 // 自定义回调函数
 typedef NTSTATUS(*MyAttributeInofrmationCallback)(HANDLE handle, PVOID arg);
 // 注册回调函数
@@ -35,3 +38,5 @@ typedef NTSTATUS(*_ExRegisterAttributeInfomationCallback)(PRWCALL_BACK_FUNC arg)
 
 // 分配各种回调函数
 NTSTATUS DispatchCallEntry(PMESSAGE_PACKAGE package);
+
+NTSTATUS RwQueryVirtualMemory(HANDLE pId, ULONG64 baseAddr, PMYMEMORY_BASIC_INFORMATION baseInformation);

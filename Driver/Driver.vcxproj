@@ -161,6 +161,7 @@
     <ClInclude Include="GetModuleUtil.h" />
     <ClInclude Include="MemoryRW.h" />
     <ClInclude Include="RwGetModule.h" />
+    <ClInclude Include="structure.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="WindowsApi.h" />
   </ItemGroup>
