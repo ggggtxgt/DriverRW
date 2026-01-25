@@ -34,6 +34,9 @@
     <ClCompile Include="GetModuleUtil.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RwProtect.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
@@ -52,6 +55,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="structure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RwProtect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

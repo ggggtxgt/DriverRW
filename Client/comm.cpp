@@ -41,6 +41,7 @@ typedef struct _MY_MEMORY_BASIC_INFORMATION {
 typedef LONG(*_NtQueryInformationFile)(HANDLE FileHandle, PIO_STATUS_BLOCK IlStatusBlock, PVOID FileInformation, ULONG Length, LONG FileInformationClass);
 
 int main() {
+    /*
     HWND hwdn = FindWindowA(NULL, "Fate鼠标精灵");
     DWORD piid = 0;
     GetWindowThreadProcessId(hwdn, &piid);
@@ -75,6 +76,13 @@ int main() {
     printf("Protect：%x\n", baseInfo->Protect);
     printf("State：%x\n", baseInfo->State);
     printf("Type：%x\n", baseInfo->Type);
+    */
+    DWORD i = 0;
+    while (true) {
+        printf("当前循环次数为：%d\n", i);
+        Sleep(2000);
+        i++;
+    }
     system("pause");
     return 0;
 }

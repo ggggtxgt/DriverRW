@@ -151,6 +151,7 @@
     <FilesToPackage Include="$(TargetPath)" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="RwProtect.c" />
     <ClCompile Include="GetModuleUtil.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="MemoryRW.c" />
@@ -161,6 +162,7 @@
     <ClInclude Include="GetModuleUtil.h" />
     <ClInclude Include="MemoryRW.h" />
     <ClInclude Include="RwGetModule.h" />
+    <ClInclude Include="RwProtect.h" />
     <ClInclude Include="structure.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="WindowsApi.h" />
