@@ -40,6 +40,10 @@ typedef struct _MY_MEMORY_BASIC_INFORMATION {
 // 定义 _NtQueryInformationFile 函数指针类型，位于 ntdll.dll 之中
 typedef LONG(*_NtQueryInformationFile)(HANDLE FileHandle, PIO_STATUS_BLOCK IlStatusBlock, PVOID FileInformation, ULONG Length, LONG FileInformationClass);
 
+void test() {
+    MessageBoxA(0, "线程已被劫持!", "提示", MB_OK);
+}
+
 int main() {
     /*
     HWND hwdn = FindWindowA(NULL, "Fate鼠标精灵");
@@ -77,6 +81,7 @@ int main() {
     printf("State：%x\n", baseInfo->State);
     printf("Type：%x\n", baseInfo->Type);
     */
+    printf("函数地址为:%llx\n", test);
     DWORD i = 0;
     while (true) {
         printf("当前循环次数为：%d\n", i);

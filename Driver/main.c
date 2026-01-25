@@ -13,7 +13,9 @@ void DriverUnload(PDRIVER_OBJECT pDriver) {
         ObUnRegisterCallbacks(hCallback);
     }
     */
-
+    // PsSetCreateProcessNotifyRoutine(processCreateFileter, TRUE);
+    // PsRemoveCreateThreadNotifyRoutine(threadCreateFilter);
+    PsRemoveLoadImageNotifyRoutine(loadImageFilter);
 }
 /*
 OB_PREOP_CALLBACK_STATUS PobPreOperationCallback(PVOID RegistrationContext, POB_PRE_OPERATION_INFORMATION OperationInformation) {
@@ -29,6 +31,27 @@ typedef NTSTATUS (*_PsResumeThread)(IN PETHREAD Thread, OUT PULONG PreviousSuspe
 
 void PobPostOperationCallback(PVOID RegistrationContext, POB_POST_OPERATION_INFORMATION OperationInformation) {
 
+}
+
+VOID processCreateFileter(_In_ HANDLE ParentId, _In_ HANDLE ProcessId, _In_ BOOLEAN Create) {
+    if (Create) {
+        DbgPrint("进程已创建!");
+    } else {
+        DbgPrint("进程已销毁!");
+    }
+}
+
+VOID threadCreateFilter(_In_ HANDLE ProcessId, _In_ HANDLE ThreadId, _In_ BOOLEAN Create) {
+    if (Create) {
+        DbgPrint("线程已创建!");
+    }
+    else {
+        DbgPrint("线程已销毁!");
+    }
+}
+
+VOID loadImageFilter(_In_opt_ PUNICODE_STRING FullImageName, _In_ HANDLE ProcessId, _In_ PIMAGE_INFO ImageInfo) {
+    DbgPrint("已有模块加载!");
 }
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
@@ -65,7 +88,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
     */
     // 33FF897C2424654C8B2425880100004C89A424800000006641FF8C24C40100004881C1300400000F0D09
     pDriver->DriverUnload = DriverUnload;
-
+    /*
     ULONG64 uaddr = RwGetAddrByCode("33FF897C2424654C8B2425880100004C89A424800000006641FF8C24C40100004881C1300400000F0D09", 84);
     uaddr -= 42;
     if (0 == uaddr) return STATUS_SUCCESS;
@@ -77,5 +100,31 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
     NTSTATUS status = PsLookupThreadByThreadId(111, &peThread);
     if (!NT_SUCCESS(status)) return STATUS_SUCCESS;
     myThreadSuspend(peThread, 0);
+    */
+    // 创建进程
+    /*
+    NTSTATUS state = PsSetCreateProcessNotifyRoutine(processCreateFileter, FALSE);
+    if (NT_SUCCESS(state)) {
+        DbgPrint("注册系统回调成功!\n");
+    } else {
+        DbgPrint("注册系统回调失败!");
+    }
+    */
+    // 创建线程
+    /*
+    NTSTATUS state = PsSetCreateThreadNotifyRoutine(threadCreateFilter);
+    if (NT_SUCCESS(state)) {
+        DbgPrint("注册系统回调成功!\n");
+    } else {
+        DbgPrint("注册系统回调失败!");
+    }
+    */
+    // 模块
+    NTSTATUS state = PsSetLoadImageNotifyRoutine(loadImageFilter);
+    if (NT_SUCCESS(state)) {
+        DbgPrint("注册系统回调成功!\n");
+    } else {
+        DbgPrint("注册系统回调失败!");
+    }
     return STATUS_SUCCESS;
 }
