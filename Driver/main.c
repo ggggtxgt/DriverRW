@@ -25,6 +25,7 @@ void PobPostOperationCallback(PVOID RegistrationContext, POB_POST_OPERATION_INFO
 }
 
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
+    /*
     pDriver->DriverUnload = DriverUnload;
     PKLDR_DATA_TABLE_ENTRY pLdr = pDriver->DriverSection;
     pLdr->Flags |= 0x20;  // 没有微软签名的作法
@@ -40,11 +41,19 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
     RtlInitUnicodeString(&obCallback.Altitude, L"obCallback.Altitude");
     obCallback.OperationRegistration = &obOperRegister;
     NTSTATUS status = ObRegisterCallbacks(&obCallback, &hCallback);
+    */
     /*
     RTL_OSVERSIONINFOW version = { 0 };
     version.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOW);
     RtlGetVersion(&version);    // 获取当前 Windows 版本，使用 version.dwBuildNumber 判断
     */
     // RegisterCallBack();
+
+    // 修改进程对象头实现进程保护
+    PEPROCESS process = NULL;
+    NTSTATUS status = PsLookupProcessByProcessId(1872, &process);
+    if (NT_SUCCESS(status)) {
+        *((PUCHAR)process - 0X30 + 0X1B) = 4;
+    }
     return STATUS_SUCCESS;
 }
