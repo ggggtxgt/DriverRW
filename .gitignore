@@ -2,4 +2,6 @@
 .gitignore
 
 Client/.vs/*
+Client/x64/*
 Driver/.vs/*
+Driver/x64/*

@@ -1,5 +1,89 @@
 #include "Util.h"
 
+
+// 保存原始回调函数指针
+MyAttributeInofrmationCallback OldQueryCallback = NULL;
+MyAttributeInofrmationCallback OldSetCallback = NULL;
+
+/********************************************************************************************************************
+ * @brief   自定义查询回调函数
+ * @details 进行过滤，只拦截并处理指定调用者，其他调用转发给原始回调
+ * @param   handle - 查询请求的句柄
+ * @param   addr   - 查询请求的参数地址
+ * @return  NTSTATUS类型的状态码
+ * @warning 此函数运行在任意线程上下文，必须保证可重入性和线程安全性
+********************************************************************************************************************/
+NTSTATUS DrawQueryCallback(HANDLE handle, PVOID addr) {
+    DbgPrint("DrawQueryCallback函数已被调用!!! addr=0x%p", addr);
+
+    // 使用结构化异常处理(SEH)保护代码，防止访问无效内存
+    __try {
+        // 使用 ProbeForRead 更安全地检查内存 - 验证用户模式地址的有效性
+        ProbeForRead(addr, sizeof(MESSAGE_PACKAGE), sizeof(ULONG));
+        // 将地址转换为消息包结构体指针
+        PMESSAGE_PACKAGE message = (PMESSAGE_PACKAGE)addr;
+        DbgPrint("message->flag = %llu", message->flag);
+        // 检查是否为自定义请求(通过flag=1234标识)
+        if (message->flag == 1234) {
+            DbgPrint("已收到三环请求!");
+            // @todo
+
+            // 处理完成后返回成功状态
+            return STATUS_SUCCESS;
+        } else {
+            DbgPrint("非自定义请求，flag: %llu", message->flag);
+            // 非自定义请求，转发给原始回调函数处理
+            if (OldQueryCallback) {
+                return OldQueryCallback(handle, addr);
+            } else {
+                // 如果原始回调不存在，返回一个默认的成功状态
+                // 可以根据需要修改为其他状态码
+                return STATUS_SUCCESS;
+            }
+        }
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        // 发生内存访问异常时的处理
+        DbgPrint("读取内存时发生异常!");
+        // 返回异常代码，让上层知道发生了什么错误
+        return GetExceptionCode();
+    }
+    return STATUS_SUCCESS;
+}
+
+/********************************************************************************************************************
+ * @brief   自定义设置回调函数
+ * @details 进行过滤，只拦截并处理指定调用者，其他调用转发给原始回调
+ * @param   handle - 设置请求的句柄
+ * @param   addr   - 设置请求的参数地址
+ * @return  NTSTATUS类型的状态码
+ * @warning 此函数运行在任意线程上下文，必须保证可重入性和线程安全性
+********************************************************************************************************************/
+NTSTATUS DrawSetCallback(HANDLE handle, PVOID addr) {
+    DbgPrint("[驱动] DrawSetCallback函数已被调用!!! addr=0x%p", addr);
+    __try {
+        // 同样使用ProbeForRead验证内存
+        ProbeForRead(addr, sizeof(MESSAGE_PACKAGE), sizeof(ULONG));
+        PMESSAGE_PACKAGE message = (PMESSAGE_PACKAGE)addr;
+        // 检查是否为自定义请求
+        if (message->flag == 1234) {
+            DbgPrint("[驱动] 已收到三环请求(Set)!");
+            // 这里可以添加设置操作的具体逻辑
+            return STATUS_SUCCESS;
+        } else {
+            // 非自定义请求，转发给原始回调
+            if (OldSetCallback) {
+                return OldSetCallback(handle, addr);
+            } else {
+                return STATUS_SUCCESS;
+            }
+        }
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        DbgPrint("[驱动] 读取内存时发生异常(Set)!");
+        return GetExceptionCode();
+    }
+    return STATUS_SUCCESS;
+}
+
 // 注册自定义属性信息回调函数
 NTSTATUS RegisterCallBack() {
     // 获取 ExRegisterAttributeInformationCallback 函数地址
@@ -19,5 +103,31 @@ NTSTATUS RegisterCallBack() {
     // 计算属性信息结构地址
     PULONG64 attrInfoAddr = ((ULONG64)funcAddr + 0xd + 7 + offset);
 
-    return STATUS_SUCCESS;
+    // query 与 set 相邻，可以将两者地址作为一个数组(0 -> query; 0 -> set)
+    // 保存原始回调函数指针
+    OldQueryCallback = (MyAttributeInofrmationCallback)attrInfoAddr[0];
+    OldSetCallback = (MyAttributeInofrmationCallback)attrInfoAddr[1];
+
+    DbgPrint("原始查询回调地址: 0x%p", OldQueryCallback);
+    DbgPrint("原始设置回调地址: 0x%p", OldSetCallback);
+
+    // 如果想要成功注册回调函数，则两个地址必须为空，而不为空，就不会进行注册
+    attrInfoAddr[0] = 0;
+    attrInfoAddr[1] = 0;
+
+    // 注册自定义回调函数
+    _ExRegisterAttributeInfomationCallback regAttrInfoCallback = funcAddr;
+    RWCALL_BACK_FUNC rwCallBackFunc = { 0 };
+    rwCallBackFunc.ExDisQueryAttributeInformation = DrawQueryCallback;
+    rwCallBackFunc.ExDisSetAttributeInformation = DrawSetCallback;
+    NTSTATUS status = regAttrInfoCallback(&rwCallBackFunc);
+    if (NT_SUCCESS(status)) {
+        DbgPrint("注册成功!");
+    } else {
+        DbgPrint("注册失败!");
+        // 注册失败时，应当恢复原始回调
+        attrInfoAddr[0] = (ULONG64)OldQueryCallback;
+        attrInfoAddr[1] = (ULONG64)OldSetCallback;
+    }
+    return status;
 }
