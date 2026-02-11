@@ -1,9 +1,11 @@
 #include "Util.h"
 
-
 // 保存原始回调函数指针
 MyAttributeInofrmationCallback OldQueryCallback = NULL;
 MyAttributeInofrmationCallback OldSetCallback = NULL;
+
+// 保存原始回调地址
+PULONG64 uCallBack = NULL;
 
 /********************************************************************************************************************
  * @brief   自定义查询回调函数
@@ -26,19 +28,12 @@ NTSTATUS DrawQueryCallback(HANDLE handle, PVOID addr) {
         // 检查是否为自定义请求(通过flag=1234标识)
         if (message->flag == 1234) {
             DbgPrint("已收到三环请求!");
-            // @todo
-
-            // 处理完成后返回成功状态
-            return STATUS_SUCCESS;
+            message->result = DispatchCallbackEntry(message);
         } else {
             DbgPrint("非自定义请求，flag: %llu", message->flag);
             // 非自定义请求，转发给原始回调函数处理
             if (OldQueryCallback) {
                 return OldQueryCallback(handle, addr);
-            } else {
-                // 如果原始回调不存在，返回一个默认的成功状态
-                // 可以根据需要修改为其他状态码
-                return STATUS_SUCCESS;
             }
         }
     } __except (EXCEPTION_EXECUTE_HANDLER) {
@@ -67,20 +62,23 @@ NTSTATUS DrawSetCallback(HANDLE handle, PVOID addr) {
         // 检查是否为自定义请求
         if (message->flag == 1234) {
             DbgPrint("[驱动] 已收到三环请求(Set)!");
-            // 这里可以添加设置操作的具体逻辑
-            return STATUS_SUCCESS;
+            message->result = DispatchCallbackEntry(message);
         } else {
             // 非自定义请求，转发给原始回调
             if (OldSetCallback) {
                 return OldSetCallback(handle, addr);
-            } else {
-                return STATUS_SUCCESS;
             }
         }
     } __except (EXCEPTION_EXECUTE_HANDLER) {
         DbgPrint("[驱动] 读取内存时发生异常(Set)!");
         return GetExceptionCode();
     }
+    return STATUS_SUCCESS;
+}
+
+// 根据需要完成的操作，分发不同类型的回调函数
+NTSTATUS DispatchCallbackEntry(PMESSAGE_PACKAGE message) {
+
     return STATUS_SUCCESS;
 }
 
@@ -102,6 +100,8 @@ NTSTATUS RegisterCallBack() {
     ULONG64 offset = *(PULONG)((ULONG64)funcAddr + 0x10);
     // 计算属性信息结构地址
     PULONG64 attrInfoAddr = ((ULONG64)funcAddr + 0xd + 7 + offset);
+    // 保存原始回调地址
+    uCallBack = attrInfoAddr;
 
     // query 与 set 相邻，可以将两者地址作为一个数组(0 -> query; 0 -> set)
     // 保存原始回调函数指针
@@ -130,4 +130,12 @@ NTSTATUS RegisterCallBack() {
         attrInfoAddr[1] = (ULONG64)OldSetCallback;
     }
     return status;
+}
+
+// 卸载回调函数
+VOID UnRegisterCallback() {
+    if (uCallBack) {
+        uCallBack[0] = OldSetCallback;      // 恢复设置回调
+        uCallBack[1] = OldQueryCallback;    // 恢复查询回调
+    }
 }

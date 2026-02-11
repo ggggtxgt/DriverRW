@@ -18,6 +18,9 @@ typedef NTSTATUS(*MyAttributeInofrmationCallback)(HANDLE handle, PVOID arg);
 ********************************************************************************************************************/
 NTSTATUS RegisterCallBack();
 
+// 卸载回调函数 - 恢复原始回调函数
+VOID UnRegisterCallback();
+
 // 读写回调函数结构体
 typedef struct _RWCALL_BACK_FUNC {
     MyAttributeInofrmationCallback ExDisSetAttributeInformation;    // 设置属性信息回调函数
@@ -35,3 +38,6 @@ typedef struct _MESSAGE_PACKAGE {
     ULONG64 size;   // 数据的长度
     ULONG result;   // 执行结果（返回应用层）
 } MESSAGE_PACKAGE, * PMESSAGE_PACKAGE;
+
+// 根据需要完成的操作，分发不同类型的回调函数
+NTSTATUS DispatchCallbackEntry(PMESSAGE_PACKAGE message);

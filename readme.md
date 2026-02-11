@@ -9,3 +9,4 @@
 - [‍‌⁠⁠‬‍‍⁠‌‬‍‍⁠‬‌⁠﻿‌⁠﻿‍‌01另类通信方式 - 飞书云文档](https://my.feishu.cn/docx/AAVBdrsz7onRU5xotcycoRx3nGc)
 - [‌‌‌‬‍‬﻿⁠⁠‍‌﻿‍⁠‌﻿‌﻿‌‬‍‌⁠﻿﻿02注册回调函数 - 飞书云文档](https://my.feishu.cn/docx/MZmtdYmF6oxqQbx00MLcgps3n1d)
 - [⁠‌‬‬⁠﻿﻿‌⁠‍﻿⁠‬‍‌﻿‬⁠‍‍‍﻿⁠‬03应用-驱动层通信 - 飞书云文档](https://my.feishu.cn/docx/BsFqd3CM8oGuSkx5qpacCFU1nff)
+- [‌⁠‬‍‬‍‬‬‌‍‍‌﻿‬﻿‌⁠⁠‍﻿‬⁠‍‬‌04卸载回调函数 - 飞书云文档](https://my.feishu.cn/docx/QOs0dyDqyoSp3BxqjzBcC515nXd)
