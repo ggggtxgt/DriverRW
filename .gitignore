@@ -1,0 +1,5 @@
+.idea/*
+.gitignore
+
+Client/.vs/*
+Driver/.vs/*
