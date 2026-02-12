@@ -13,3 +13,5 @@
 NTSTATUS ReadR3Memory(HANDLE pid, PVOID start, ULONG64 size, PVOID dest);
 // 通过修改CR3读取指定进程的内存
 NTSTATUS ReadR3MemoryByCr3(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr);
+// 通过复制虚拟内存(MmCopyVirtualMemory)读取指定进程的内存
+NTSTATUS ReadR3MemoryByVirtualMemory(HANDLE pId, PVOID startAddr, ULONG64 size, PVOID destAddr) {
