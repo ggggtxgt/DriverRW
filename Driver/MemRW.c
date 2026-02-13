@@ -96,56 +96,68 @@ NTSTATUS ReadR3Memory(HANDLE pid, PVOID start, ULONG64 size, PVOID dest) {
 
 // 通过修改CR3读取指定进程的内存
 NTSTATUS ReadR3MemoryByCr3(HANDLE pid, PVOID start, ULONG64 size, PVOID dest) {
-    // 检查传入的参数有效性，避免系统崩溃
+    // 参数检查
     NTSTATUS status = CheckParams(start, size, dest);
     if (!NT_SUCCESS(status)) return status;
 
-    // 获取目标进程 EPROCESS 对象
+    // 获取目标进程对象
     PEPROCESS pTargetProcess;
     status = GetTargetProcess(pid, &pTargetProcess);
     if (!NT_SUCCESS(status)) return status;
 
-    // 分配临时缓冲区
+    // 分配内核临时缓冲区
     PVOID buff = AllocateAndZeroBuffer(size, &status);
     if (NULL == buff) {
         ObDereferenceObject(pTargetProcess);
         return status;
     }
 
-    // CR3切换读取
-    // 获取当前进程CR3
-    ULONG64 curCr3 = __readcr3();
-    // 获取目标进程CR3
+    // CR3 切换准备
+    // 保存当前 CR3
+    ULONG64 curCr3 = __readcr3();   
+    // 获取目标CR3
     ULONG64 targetCr3 = *(ULONG64*)((ULONG64)pTargetProcess + 0x28);
-    // 进入临界区，将当前线程IRQL提升至APC_LEVEL，禁用 APC 交付，防止被 APC 打断
-    KeEnterCriticalRegion();
-    // 执行 cli 指令，关闭 CPU 的外部硬件中断
-    _disable();
-    // 将目标进程的页表基址写入 CR3 寄存器 —— 地址空间切换立即生效
+
+    // 进入临界区 + 关中断，保证切换原子性
+    KeEnterCriticalRegion();   // 提升 IRQL 至 APC_LEVEL，禁用 APC
+    _disable();                // 关闭外部中断
+
+    // 切换到目标进程地址空间
     __writecr3(targetCr3);
 
-    if (!(MmIsAddressValid(start) && MmIsAddressValid((ULONG64)start + size))) {
-        __writecr3(curCr3);                 // 恢复原进程地址空间
-        KeLeaveCriticalRegion();            // 恢复 APC 交付(IRQL改为原值)
-        _enable();                          // 重新允许中断(STI)
+    // 读取目标进程内存
+    __try {
+        // 验证目标用户地址可读（可选，但推荐）
+        ProbeForRead(start, size, 1);
+        RtlCopyMemory(buff, start, size);   // 复制到内核缓冲区
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        // 读取失败：立即恢复原始地址空间，返回错误码
+        __writecr3(curCr3);
+        KeLeaveCriticalRegion();
+        _enable();
         ObDereferenceObject(pTargetProcess);
         FreeKernelBuffer(buff);
-        return STATUS_ACCESS_VIOLATION;
+        return GetExceptionCode();
     }
 
-    RtlCopyMemory(buff, start, size);  // 将目标进程用户数据复制到内核缓冲区
-    RtlCopyMemory(dest, buff, size);   // 直接复制到目标缓冲区
-
+    // 恢复原始地址空间（切换回当前进程）
     __writecr3(curCr3);
     KeLeaveCriticalRegion();
     _enable();
 
+    // 将数据写入目标缓冲区（当前进程上下文）
+    __try {
+        ProbeForWrite(dest, size, 1);       // 验证目标缓冲区可写
+        RtlCopyMemory(dest, buff, size);    // 复制到用户目标地址
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        status = GetExceptionCode();        // 捕获写入异常
+    }
+
     // 清理资源
     FreeKernelBuffer(buff);
     ObDereferenceObject(pTargetProcess);
-    return STATUS_SUCCESS;
+    return status;
 }
-
 // 通过虚拟内存(MmCopyVirtualMemory)读取指定进程内存
 NTSTATUS ReadR3MemoryByVirtualMemory(HANDLE pid, PVOID start, ULONG64 size, PVOID dest) {
     // 检查传入的参数有效性，避免系统崩溃
@@ -166,7 +178,7 @@ NTSTATUS ReadR3MemoryByVirtualMemory(HANDLE pid, PVOID start, ULONG64 size, PVOI
 
     // 调用 MmCopyVirtualMemory 跨进程复制
     SIZE_T readSize = 0;
-    status = MmCopyVirtualMemory(pTargetProcess, start, IoGetCurrentProcess(), buff, size, UserMode, &readSize);
+    status = MmCopyVirtualMemory(pTargetProcess, start, IoGetCurrentProcess(), buff, size, KernelMode, &readSize);
 
     // 若成功，将数据复制到调用者提供的缓冲区
     if (NT_SUCCESS(status)) {
@@ -185,7 +197,7 @@ PVOID RwMapMemory(PVOID toAddress, ULONG buffSize, PMDL* pMdl) {
     mdl = IoAllocateMdl(toAddress, buffSize, FALSE, FALSE, NULL);
     // 锁定内存页
     __try {
-        MmProbeAndLockPages(mdl, UserMode, IoModifyAccess);
+        MmProbeAndLockPages(mdl, UserMode, IoReadAccess);
     } __except (1) {
         DbgPrint("MmProbeAndLockPages Error!");
         IoFreeMdl(mdl);
@@ -193,7 +205,7 @@ PVOID RwMapMemory(PVOID toAddress, ULONG buffSize, PMDL* pMdl) {
     }
     PVOID mappedAddr = NULL;
     __try {
-        mappedAddr = MmMapLockedPagesSpecifyCache(mdl, KernelMode, MmNonCached, toAddress, FALSE, HighPagePriority);
+        mappedAddr = MmMapLockedPagesSpecifyCache(mdl, KernelMode, MmNonCached, NULL, FALSE, HighPagePriority);
     } __except (1) {
         DbgPrint("MmMapLockedPagesSpecifyCache Error!");
         MmUnlockPages(mdl);
@@ -201,6 +213,7 @@ PVOID RwMapMemory(PVOID toAddress, ULONG buffSize, PMDL* pMdl) {
         return NULL;
     }
     *pMdl = mdl;
+    DbgPrint("RwMapMemory returned: 0x%p", mappedAddr);
     return mappedAddr;
 }
 
@@ -252,7 +265,12 @@ NTSTATUS ReadR3MemoryByMdl(HANDLE pid, PVOID start, ULONG64 size, PVOID dest) {
     KeUnstackDetachProcess(&apc);
 
     // 将数据复制到目标缓冲区
-    RtlCopyMemory(dest, buff, size);
+    __try {
+        ProbeForWrite(dest, size, 1);
+        RtlCopyMemory(dest, buff, size);
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        status = GetExceptionCode();
+    }
 
     // 清理资源
     FreeKernelBuffer(buff);

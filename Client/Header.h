@@ -40,3 +40,11 @@ typedef struct _MESSAGE_PACKAGE {
     ULONG64 size;   // 数据的长度
     ULONG result;   // 执行结果
 } MESSAGE_PACKAGE, * PMESSAGE_PACKAGE;
+
+// 用于读写指定进程内存时所有参数
+typedef struct _RWMM {
+    ULONG64 pid;    // 进程号
+    ULONG64 start;  // 读取的起始地址
+    ULONG64 size;   // 读取的大小
+    ULONG64 dest;   // 存储已读取内存的缓冲区
+} RWMM, * PRWMM;

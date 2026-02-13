@@ -4,6 +4,7 @@
 ********************************************************************************************************************/
 
 #include "Util.h"
+#include "MemRW.h"
 
 // 保存原始回调函数指针
 MyAttributeInofrmationCallback OldQueryCallback = NULL;
@@ -47,7 +48,6 @@ NTSTATUS DrawQueryCallback(HANDLE handle, PVOID addr) {
         // 返回异常代码，让上层知道发生了什么错误
         return GetExceptionCode();
     }
-    return STATUS_SUCCESS;
 }
 
 /********************************************************************************************************************
@@ -78,13 +78,29 @@ NTSTATUS DrawSetCallback(HANDLE handle, PVOID addr) {
         DbgPrint("[驱动] 读取内存时发生异常(Set)!");
         return GetExceptionCode();
     }
-    return STATUS_SUCCESS;
 }
 
 // 根据需要完成的操作，分发不同类型的回调函数
 NTSTATUS DispatchCallbackEntry(PMESSAGE_PACKAGE message) {
+    NTSTATUS status = STATUS_SUCCESS;
+    switch (message->func) {
+        case 1: {
+            // 如下四种方式均已通过测试，可以正确读取指定进程内存
+            PRWMM rwmm = (PRWMM)message->data;
+            // status = ReadR3Memory(rwmm->pid, rwmm->start, rwmm->size, rwmm->dest);
+            // status = ReadR3MemoryByCr3(rwmm->pid, rwmm->start, rwmm->size, rwmm->dest);
+            status = ReadR3MemoryByVirtualMemory(rwmm->pid, rwmm->start, rwmm->size, rwmm->dest);
+            // status = ReadR3MemoryByMdl(rwmm->pid, rwmm->start, rwmm->size, rwmm->dest);
+            break;
+        }
+        case 2: {
+            break;
+        }
 
-    return STATUS_SUCCESS;
+        default:
+            break;
+    }
+    return status;
 }
 
 // 注册自定义属性信息回调函数

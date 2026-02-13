@@ -6,6 +6,17 @@
 #include "Header.h"
 
 int main() {
+	ULONG64 readData = 0;
+	HWND hwnd = FindWindowA(NULL, "Fate鼠标精灵");
+	DWORD piid = 0;
+	GetWindowThreadProcessId(hwnd, &piid);
+	PRWMM rwmm = (PRWMM)malloc(sizeof(RWMM));
+	memset(rwmm, 0, sizeof(RWMM));
+	rwmm->pid = piid;
+	rwmm->start = 0x400000;
+	rwmm->dest = (ULONG64)&readData;
+	rwmm->size = sizeof(ULONG64);
+
 	// 获取 _NtQueryInformationFile 函数地址
 	_NtQueryInformationFile MyQueryInfoFile = NULL;
 	MyQueryInfoFile = (_NtQueryInformationFile)GetProcAddress(GetModuleHandleA("ntdll.dll"), "NtQueryInformationFile");
@@ -29,6 +40,8 @@ int main() {
 
 	PMESSAGE_PACKAGE message = (PMESSAGE_PACKAGE)fileBuffer;
 	message->flag = 1234;
+	message->func = 1;
+	message->data = (ULONG64)rwmm;
 
 	// 触发驱动层回调函数
 	NTSTATUS status = MyQueryInfoFile(hFile, &ioStatus, fileBuffer, 0xE0, 0x34);
@@ -37,6 +50,7 @@ int main() {
 	} else {
 		std::cout << "调用成功完成，检查缓冲区内容" << std::endl;
 	}
+	printf("R0读取的数据为:%d\n", readData);
 	system("pause");
 	return 0;
 }

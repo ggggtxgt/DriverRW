@@ -25,9 +25,18 @@
     <ClCompile Include="Util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MemRW.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MemRW.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KernelAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
