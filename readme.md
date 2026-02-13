@@ -13,4 +13,5 @@
 - [‍‬⁠﻿‬‍﻿‌‬‌‍﻿‍‌‬⁠‬⁠‬‬﻿05进程挂靠读取进程内存 - 飞书云文档](https://my.feishu.cn/docx/P8LVdl7qqo7U1qxFRSdcarxpnqc)
 - [‍‬‬‌‍﻿‌‍‌‍‌‍﻿‌‍⁠﻿⁠‬‍‍‬⁠﻿‌﻿‬‌‍⁠06修改CR3读取进程内存 - 飞书云文档](https://my.feishu.cn/docx/FcBBdG4c1ow3nExjeBZcfOB1ngf)
 - [07以复制虚拟内存读取进程内存 - 飞书云文档](https://my.feishu.cn/docx/EbKsdlbajo1tpCxJbjEcwq7HnNc)
+- [‍‬⁠‬‌﻿‍‬‬‌‬‬﻿⁠⁠‍‬﻿‍‬﻿﻿‍‌08通过MDL读取进程内存 - 飞书云文档](https://my.feishu.cn/docx/Wyp9dYBeSoeWBmxcb6scBI2RnGh)
 
