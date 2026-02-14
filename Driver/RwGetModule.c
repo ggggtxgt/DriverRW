@@ -36,38 +36,38 @@ ULONG64 RwGetModuleHandle32(HANDLE pid, char* dllName) {
         return 0;
     }
 
-    // 锁定内存防止发生页交换
-    SIZE_T realRead = 0;
-    MmCopyVirtualMemory(process, pEb32, process, pEb32, 1, UserMode, &realRead);
+// 锁定内存防止发生页交换
+SIZE_T realRead = 0;
+MmCopyVirtualMemory(process, pEb32, process, pEb32, 1, UserMode, &realRead);
 
-    // 获取 LDR 数据结构指针并遍历模块链表
-    PPEB_LDR_DATA32 ldr = (PPEB_LDR_DATA32)pEb32->Ldr;
-    PLDR_DATA_TABLE_ENTRY32 listEntry32 = (PLDR_DATA_TABLE_ENTRY32)&ldr->InLoadOrderModuleList;
-    PLDR_DATA_TABLE_ENTRY32 listEntryNext = listEntry32->InLoadOrderLinks.Flink;
+// 获取 LDR 数据结构指针并遍历模块链表
+PPEB_LDR_DATA32 ldr = (PPEB_LDR_DATA32)pEb32->Ldr;
+PLDR_DATA_TABLE_ENTRY32 listEntry32 = (PLDR_DATA_TABLE_ENTRY32)&ldr->InLoadOrderModuleList;
+PLDR_DATA_TABLE_ENTRY32 listEntryNext = listEntry32->InLoadOrderLinks.Flink;
 
-    // 字符串的数据类型转换
-    ANSI_STRING ansiStr = { 0 };
-    UNICODE_STRING unicodeStr = { 0 };
-    RtlInitAnsiString(&ansiStr, dllName);
-    RtlAnsiStringToUnicodeString(&unicodeStr, &ansiStr, TRUE);
+// 字符串的数据类型转换
+ANSI_STRING ansiStr = { 0 };
+UNICODE_STRING unicodeStr = { 0 };
+RtlInitAnsiString(&ansiStr, dllName);
+RtlAnsiStringToUnicodeString(&unicodeStr, &ansiStr, TRUE);
 
-    // 遍历模块链表，查找匹配的 DLL
-    while (listEntry32 != listEntryNext) {
-        PWCHAR wstr = listEntryNext->BaseDllName.Buffer;
-        UNICODE_STRING udllName = { 0 };
-        RtlInitUnicodeString(&udllName, wstr);
-        if (0 == RtlCompareUnicodeString(&unicodeStr, &udllName, TRUE)) {
-            dllBase = (ULONG64)listEntryNext->DllBase;
-            break;
-        }
-        listEntryNext = listEntryNext->InLoadOrderLinks.Flink;
+// 遍历模块链表，查找匹配的 DLL
+while (listEntry32 != listEntryNext) {
+    PWCHAR wstr = listEntryNext->BaseDllName.Buffer;
+    UNICODE_STRING udllName = { 0 };
+    RtlInitUnicodeString(&udllName, wstr);
+    if (0 == RtlCompareUnicodeString(&unicodeStr, &udllName, TRUE)) {
+        dllBase = (ULONG64)listEntryNext->DllBase;
+        break;
     }
+    listEntryNext = listEntryNext->InLoadOrderLinks.Flink;
+}
 
-    // 释放资源
-    RtlFreeUnicodeString(&unicodeStr);
-    KeUnstackDetachProcess(&state);
-    ObDereferenceObject(process);
-    return dllBase;
+// 释放资源
+RtlFreeUnicodeString(&unicodeStr);
+KeUnstackDetachProcess(&state);
+ObDereferenceObject(process);
+return dllBase;
 }
 
 // 获取某个模块的基地址(64位进程)

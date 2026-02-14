@@ -20,4 +20,5 @@
 - [‌﻿‍‍﻿⁠﻿‍‬‬‌⁠‬﻿‍⁠‍‍﻿‍12获取64位加载模块 - 飞书云文档](https://my.feishu.cn/docx/GUx0d540WoGE4Lxb1xxc7hCynfA)
 - [‌⁠⁠﻿‬‬﻿⁠‌﻿﻿‍‍‌‍‍‌﻿‌⁠‬‌‌‌13获取进程模块测试 - 飞书云文档](https://my.feishu.cn/docx/VV3idXoe2oHI0xxaj3Zc5EKsndh)
 - [‍﻿‬‍﻿‬⁠⁠⁠⁠﻿‍‬⁠‌‬‬﻿⁠﻿14另类通信方式(Win10) - 飞书云文档](https://my.feishu.cn/docx/Rju3d35fPoOKgwxuWJRcYCCVndb)
+- [‌⁠‬‌⁠﻿⁠‌‍‍‬﻿﻿⁠⁠﻿‍﻿﻿﻿15查找指定内核模块 - 飞书云文档](https://my.feishu.cn/docx/FhmedDsJsoSul9xreZCcalSCnzg)
 

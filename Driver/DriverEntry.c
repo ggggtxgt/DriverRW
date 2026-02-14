@@ -1,5 +1,6 @@
 #include "Util.h"
 #include "RwGetModule.h"
+#include "GetModuleUitl.h"
 
 /********************************************************************************************************************
  * @brief   驱动卸载回调函数：当驱动被卸载时，系统自动启用该函数；
@@ -23,7 +24,12 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
 	// RegisterCallBack();
 	
 	// 获取指定进程模块
-	ULONG64 addr = RwGetModuleHandle64(1192, "kernel32.dll");
+	// ULONG64 addr = RwGetModuleHandle64(1192, "kernel32.dll");
+	// DbgPrint("addr: %d", addr);
+
+	// 查找指定内核模块
+	ULONG64 addr = GetModuleBase("ntoskrnl.exe");
 	DbgPrint("addr: %d", addr);
+
 	return STATUS_SUCCESS;
 }
