@@ -16,4 +16,5 @@
 - [‍‬⁠‬‌﻿‍‬‬‌‬‬﻿⁠⁠‍‬﻿‍‬﻿﻿‍‌08通过MDL读取进程内存 - 飞书云文档](https://my.feishu.cn/docx/Wyp9dYBeSoeWBmxcb6scBI2RnGh)
 - [‍‬‬‌‍⁠‌﻿﻿‌‬‍‬‌⁠‌⁠‍⁠‬﻿‌⁠‍⁠09完善读取进程内存 - 飞书云文档](https://my.feishu.cn/docx/TJ5NdsV9nosQYbxq4Zecj8b2nEb)
 - [‍‌‬‍‌‬‬‬⁠‬‍‌﻿‍﻿‌‬﻿⁠⁠‬‬‌‬⁠﻿10读取进程内存测试 - 飞书云文档](https://my.feishu.cn/docx/CiaddeuZmoJ8slxjbeNcLt3tnzb)
+- [‌﻿‬⁠‬﻿‍‌‌﻿‬﻿⁠‬‌‍﻿‍‬﻿‌‬‌⁠11获取32位加载模块 - 飞书云文档](https://my.feishu.cn/docx/AD64dLjUMonqsLx9rUpcqgOhnUb)
 
