@@ -1,6 +1,6 @@
 /********************************************************************************************************************
  * @brief   KernelAPI.h
- * @details Windows 内核之中未导出的函数声明；
+ * @details Windows 内核之中未导出的函数声明(未文档化的函数)；
 ********************************************************************************************************************/
 
 #pragma once
@@ -27,4 +27,6 @@ NTSTATUS MmCopyVirtualMemory(
 );
 
 // 获取32位程序PEB
-void* PsGetProcessWow64Process(PEPROCESS process);
+void* PsGetProcessWow64Process(PEPROCESS process); 
+// 获取64位程序PEB
+void* PsGetProcessPeb(PEPROCESS process);

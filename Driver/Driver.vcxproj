@@ -143,12 +143,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MemRW.c" />
+    <ClCompile Include="RwGetModule.c" />
     <ClCompile Include="Util.c" />
     <ClCompile Include="DriverEntry.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KernelAPI.h" />
     <ClInclude Include="MemRW.h" />
+    <ClInclude Include="RwGetModule.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,4 +1,5 @@
 #include "Util.h"
+#include "RwGetModule.h"
 
 /********************************************************************************************************************
  * @brief   驱动卸载回调函数：当驱动被卸载时，系统自动启用该函数；
@@ -6,7 +7,7 @@
 ********************************************************************************************************************/
 void DriverUnload(PDRIVER_OBJECT pDriver) {
 	DbgPrint("DriverUnload!!!");
-	UnRegisterCallback();
+	// UnRegisterCallback();
 }
 
 /********************************************************************************************************************
@@ -18,6 +19,11 @@ void DriverUnload(PDRIVER_OBJECT pDriver) {
 NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
 	DbgPrint("DriverEntry!!!");
 	pDriver->DriverUnload = DriverUnload;
-	RegisterCallBack();
+	// 读取指定进程内存
+	// RegisterCallBack();
+	
+	// 获取指定进程模块
+	ULONG64 addr = RwGetModuleHandle64(1192, "kernel32.dll");
+	DbgPrint("addr: %d", addr);
 	return STATUS_SUCCESS;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <ntifs.h>
+#include "KernelAPI.h"
 
 // 32位进程的进程环境块(PEB)结构
 typedef struct _PEB32 {
