@@ -5,8 +5,8 @@
 
 #include "RwGetModule.h"
 
-// 获取某个模块的基地址
-ULONG64 RwGetModuleHandle(HANDLE pid, char* dllName) {
+// 获取某个模块的基地址(32位进程)
+ULONG64 RwGetModuleHandle32(HANDLE pid, char* dllName) {
     ULONG64 dllBase = 0;
 
     // 参数检查：模块名不能为空
@@ -28,8 +28,6 @@ ULONG64 RwGetModuleHandle(HANDLE pid, char* dllName) {
         ObDereferenceObject(process);
         return 0;
     }
-
-    // PPEB64 pEb64 = PsGetProcesspeb(process);
 
     // 尝试读取PEB的第一个字节，以触发页面错误并确保PEB所在页面被加载到内存中
     SIZE_T realRead = 0;
@@ -82,6 +80,79 @@ ULONG64 RwGetModuleHandle(HANDLE pid, char* dllName) {
     }
 
     // 释放资源
+    RtlFreeUnicodeString(&unicodeStr);
+    KeUnstackDetachProcess(&state);
+    ObDereferenceObject(process);
+    return dllBase;
+}
+
+// 获取某个模块的基地址(64位进程)
+ULONG64 RwGetModuleHandle64(HANDLE pid, char* dllName) {
+    ULONG64 dllBase = 0;
+
+    // 参数检查
+    if (NULL == dllName) return 0;
+
+    // 获取目标进程EPROCESS对象
+    PEPROCESS process = NULL;
+    NTSTATUS status = PsLookupProcessByProcessId(pid, &process);
+    if (!NT_SUCCESS(status)) return 0;
+
+    // 附加到目标进程地址空间
+    KAPC_STATE state = { 0 };
+    KeStackAttachProcess(process, &state);
+
+    // 获取64位PEB指针
+    PPEB pPeb64 = (PPEB)PsGetProcessPeb(process);
+    if (NULL == pPeb64) {
+        KeUnstackDetachProcess(&state);
+        ObDereferenceObject(process);
+        return 0;
+    }
+
+    // 将输入模块名转换为UNICODE_STRING（模块名在PEB中以UNICODE存储）
+    ANSI_STRING ansiStr = { 0 };
+    UNICODE_STRING unicodeStr = { 0 };
+    RtlInitAnsiString(&ansiStr, dllName);
+    status = RtlAnsiStringToUnicodeString(&unicodeStr, &ansiStr, TRUE);
+    if (!NT_SUCCESS(status)) {
+        KeUnstackDetachProcess(&state);
+        ObDereferenceObject(process);
+        return 0;
+    }
+
+    // 结构化异常保护所有用户内存访问
+    __try {
+        // 验证PEB可读
+        ProbeForRead(pPeb64, 1, 1);
+        // 获取LDR数据结构
+        PPEB_LDR_DATA ldr = (PPEB_LDR_DATA)pPeb64->Ldr;
+        ProbeForRead(ldr, sizeof(PEB_LDR_DATA), 1);
+        // 获取链表头（注意：头节点本身不是有效模块）
+        PLDR_DATA_TABLE_ENTRY listHead = (PLDR_DATA_TABLE_ENTRY)&ldr->InLoadOrderModuleList;
+        ProbeForRead(listHead, sizeof(LDR_DATA_TABLE_ENTRY), 1);
+        // 从第一个实际模块开始遍历（Flink指向第一个模块）
+        PLDR_DATA_TABLE_ENTRY current = (PLDR_DATA_TABLE_ENTRY)ldr->InLoadOrderModuleList.Flink;
+        ULONG maxModules = 1024;  // 防止死循环
+        while (listHead != current && maxModules-- > 0) {
+            // 验证当前节点及模块名字符串
+            ProbeForRead(current, sizeof(LDR_DATA_TABLE_ENTRY), 1);
+            ProbeForRead(current->BaseDllName.Buffer, current->BaseDllName.Length, 1);
+            UNICODE_STRING udllName = { 0 };
+            RtlInitUnicodeString(&udllName, current->BaseDllName.Buffer);
+            if (0 == RtlCompareUnicodeString(&unicodeStr, &udllName, TRUE)) {
+                dllBase = current->DllBase;  // 找到匹配模块，记录基址
+                break;
+            }
+            current = (PLDR_DATA_TABLE_ENTRY)current->InLoadOrderLinks.Flink;
+        }
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        // 发生异常时清空结果并记录错误
+        dllBase = 0;
+        DbgPrint("RwGetModuleHandle64: Exception 0x%X\n", GetExceptionCode());
+    }
+
+    // 清理资源
     RtlFreeUnicodeString(&unicodeStr);
     KeUnstackDetachProcess(&state);
     ObDereferenceObject(process);

@@ -6,6 +6,7 @@
 #include "Header.h"
 
 int main() {
+	// 准备用于读写指定进程内存时所有参数
 	ULONG64 readData = 0;
 	HWND hwnd = FindWindowA(NULL, "Fate鼠标精灵");
 	DWORD piid = 0;
