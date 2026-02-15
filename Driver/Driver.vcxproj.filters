@@ -32,7 +32,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GetModuleUtil.c">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -49,7 +49,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GetModuleUitl.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

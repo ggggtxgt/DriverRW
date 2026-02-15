@@ -1,6 +1,6 @@
 #pragma once
-
 #include <ntifs.h>
+#include <ntimage.h>
 
 typedef enum _SYSTEM_INFORMATION_CLASS {
     SystemBasicInformation,                // 00 Y 基本系统信息
@@ -103,4 +103,4 @@ ULONG64 RwSearchCode(
 // 通过特征码获取地址
 ULONG64 RwGetAddrByCode(char* code, ULONG codeLen);
 // 通过特征码获取地址
-ULONG64 RwGetAddrByCode(char* code, ULONG codeLen)
+ULONG64 RwGetAddrByCode(char* code, ULONG codeLen);

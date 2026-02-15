@@ -28,7 +28,11 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
 	// DbgPrint("addr: %d", addr);
 
 	// 查找指定内核模块
-	ULONG64 addr = GetModuleBase("ntoskrnl.exe");
+	// ULONG64 addr = GetModuleBase("ntoskrnl.exe");
+	// DbgPrint("addr: %d", addr);
+
+	// 通过特征码搜索
+	ULONG64 addr = RwGetAddrByCode("4C8B324C89742430BA08000000448D42FC488BCE", 40);
 	DbgPrint("addr: %d", addr);
 
 	return STATUS_SUCCESS;

@@ -3,7 +3,6 @@
  * @details 实现读取内核进程模块的相关操作；
 ********************************************************************************************************************/
 
-#include <ntimage.h>
 #include "GetModuleUitl.h"
 
 // 获取指定内核模块基地址
@@ -85,7 +84,10 @@ ULONG64 RwSearchCode(char* beginAddr, char* endAddr, char* code, ULONG codeLen) 
 
 	// 分配临时缓冲区用于存储转换后的十六进制字符串
 	char* convertCode = ExAllocatePool(NonPagedPool, (codeLen + 2));
-	if (NULL == convertCode) return resultAddr;
+	if (NULL == convertCode) {
+		DbgPrint("NULL == convertCode");
+		return resultAddr;
+	}
 
 	// 在指定地址范围内逐字节对比
 	for (size_t i = beginAddr; i < endAddr; i++) {
@@ -94,7 +96,7 @@ ULONG64 RwSearchCode(char* beginAddr, char* endAddr, char* code, ULONG codeLen) 
 		ByteToHexStr(beginAddr, convertCode, codeLen / 2);
 		for (size_t j = 0; j < codeLen; j++) {
 			// 通配符或字符匹配
-			if ('?' == code || convertCode[j] == code) {
+			if ('?' == code[j] || convertCode[j] == code[j]) {
 				continue;
 			} else {
 				cmpFlag = FALSE;
@@ -108,6 +110,7 @@ ULONG64 RwSearchCode(char* beginAddr, char* endAddr, char* code, ULONG codeLen) 
 		}
 	}
 	if (convertCode) ExFreePool(convertCode);
+	DbgPrint("RwSearchCode: resultAddr -> %d", resultAddr);
 	return resultAddr;
 }
 
@@ -115,7 +118,10 @@ ULONG64 RwSearchCode(char* beginAddr, char* endAddr, char* code, ULONG codeLen) 
 ULONG64 RwGetAddrByCode(char* code, ULONG codeLen) {
 	ULONG64 resultAddr = 0;
 	ULONG64 moduleAddr = GetModuleBase("ntoskrnl.exe");
-	if (0 == moduleAddr) return resultAddr;
+	if (0 == moduleAddr) {
+		DbgPrint("0 == moduleAddr!!!");
+		return resultAddr;
+	}
 
 	// 解析 DOS 头部
 	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)moduleAddr;
@@ -130,6 +136,7 @@ ULONG64 RwGetAddrByCode(char* code, ULONG codeLen) {
 		memcpy(sectionName, pFirstSection->Name, 8);
 		if (0 == _stricmp("PAGE", sectionName)) {
 			cmpFlag = TRUE;
+			DbgPrint("cmpFlag = TRUE;");
 			break;
 		}
 		pFirstSection++;

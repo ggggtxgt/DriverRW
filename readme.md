@@ -22,4 +22,5 @@
 - [‍﻿‬‍﻿‬⁠⁠⁠⁠﻿‍‬⁠‌‬‬﻿⁠﻿14另类通信方式(Win10) - 飞书云文档](https://my.feishu.cn/docx/Rju3d35fPoOKgwxuWJRcYCCVndb)
 - [‌⁠‬‌⁠﻿⁠‌‍‍‬﻿﻿⁠⁠﻿‍﻿﻿﻿15查找指定内核模块 - 飞书云文档](https://my.feishu.cn/docx/FhmedDsJsoSul9xreZCcalSCnzg)
 - [‌⁠‌﻿‌‬‌‬‍⁠⁠‬﻿﻿‬﻿‍‌‌﻿﻿⁠16特征码搜索(一) - 飞书云文档](https://my.feishu.cn/docx/UrAwde4Odo718RxE5BDczsRWnxf)
+- [‌⁠‌‍⁠‌‌‍﻿‍‍‬‬‌‌‍﻿‍‬‍‬⁠‬⁠⁠‬‌‬17特征码搜索(二) - 飞书云文档](https://my.feishu.cn/docx/LOiVdpbt7odUXgxz8QNcfY2wn5f)
 
