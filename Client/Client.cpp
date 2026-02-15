@@ -4,8 +4,11 @@
 ********************************************************************************************************************/
 
 #include "Header.h"
+#include "LoadDriver.h"
 
 int main() {
+	/*
+	// Winsows7 64位系统触发内核回调函数
 	// 准备用于读写指定进程内存时所有参数
 	ULONG64 readData = 0;
 	HWND hwnd = FindWindowA(NULL, "Fate鼠标精灵");
@@ -52,6 +55,9 @@ int main() {
 		std::cout << "调用成功完成，检查缓冲区内容" << std::endl;
 	}
 	printf("R0读取的数据为:%d\n", readData);
+	*/
+
+	load();
 	system("pause");
 	return 0;
 }

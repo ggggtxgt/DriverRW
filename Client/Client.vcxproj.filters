@@ -18,9 +18,15 @@
     <ClCompile Include="Client.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="LoadDriver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadDriver.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
