@@ -85,12 +85,12 @@ ULONG64 RwSearchCode(char* beginAddr, char* endAddr, char* code, ULONG codeLen) 
 	// 分配临时缓冲区用于存储转换后的十六进制字符串
 	char* convertCode = ExAllocatePool(NonPagedPool, (codeLen + 2));
 	if (NULL == convertCode) {
-		DbgPrint("NULL == convertCode");
 		return resultAddr;
 	}
 
 	// 在指定地址范围内逐字节对比
 	for (size_t i = beginAddr; i < endAddr; i++) {
+		cmpFlag = TRUE;
 		memset(convertCode, 0, (codeLen + 2));
 		// 参数为 codeLen / 2 为了适用 ByteToHexStr 函数
 		ByteToHexStr(beginAddr, convertCode, codeLen / 2);
@@ -102,15 +102,17 @@ ULONG64 RwSearchCode(char* beginAddr, char* endAddr, char* code, ULONG codeLen) 
 				cmpFlag = FALSE;
 				break;
 			}
-			if (TRUE == cmpFlag) {
-				resultAddr = beginAddr;
-				break;
-			}
-			beginAddr++;
 		}
+		if (TRUE == cmpFlag) {
+			DbgPrint("if (TRUE == cmpFlag)");
+			resultAddr = beginAddr;
+			break;
+		}
+		beginAddr++;
 	}
 	if (convertCode) ExFreePool(convertCode);
-	DbgPrint("RwSearchCode: resultAddr -> %d", resultAddr);
+	DbgPrint("RwSearchCode: begintAddr -> %p", beginAddr);
+	DbgPrint("RwSearchCode: resultAddr -> %llx", resultAddr);
 	return resultAddr;
 }
 
@@ -136,7 +138,6 @@ ULONG64 RwGetAddrByCode(char* code, ULONG codeLen) {
 		memcpy(sectionName, pFirstSection->Name, 8);
 		if (0 == _stricmp("PAGE", sectionName)) {
 			cmpFlag = TRUE;
-			DbgPrint("cmpFlag = TRUE;");
 			break;
 		}
 		pFirstSection++;
@@ -147,7 +148,7 @@ ULONG64 RwGetAddrByCode(char* code, ULONG codeLen) {
 	}
 	// 计算 PAGE 节在内存之中的起始和结束地址
 	char* beginAddr = pFirstSection->VirtualAddress + moduleAddr;
-	char* endAddr = pFirstSection->VirtualAddress + moduleAddr + pFirstSection->SizeOfRawData;
+	char* endAddr = pFirstSection->VirtualAddress + moduleAddr + (ULONG64)pFirstSection->SizeOfRawData;
 	resultAddr = RwSearchCode(beginAddr, endAddr, code, codeLen);
 	return resultAddr;
 }
