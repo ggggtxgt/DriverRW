@@ -91,3 +91,16 @@ NTSTATUS ZwQuerySystemInformation(
 );
 // 获取指定内核模块基地址
 ULONG64 GetModuleBase(PCHAR moduleName);
+// byte 转换为 十六进制字符
+void ByteToHexStr(const unsigned char* source, char* dest, int sourceLen);
+// 通过特征码进行搜索
+ULONG64 RwSearchCode(
+    char* beginAddr,        // 需要搜索的起始地址
+    char* endAddr,          // 需要搜索的结束地址
+    char* code,             // 搜索的特征码
+    ULONG codeLen           // 特征码的长度
+);
+// 通过特征码获取地址
+ULONG64 RwGetAddrByCode(char* code, ULONG codeLen);
+// 通过特征码获取地址
+ULONG64 RwGetAddrByCode(char* code, ULONG codeLen)
