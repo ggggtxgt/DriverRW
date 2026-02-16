@@ -11,5 +11,9 @@ BOOL StartDriver();
 BOOL StopDriver();
 // 卸载驱动程序
 BOOL UninstallDriver();
+// 获取随机驱动名称
+void RandomDriverName(char* driverName, DWORD len);
+// 加载资源文件
+void LoadMyResource();
 // 加载驱动完整流程
 int load();
