@@ -56,7 +56,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
 	DbgPrint("DriverEntry!!!");
 	pDriver->DriverUnload = DriverUnload;
 	// 读取指定进程内存
-	// RegisterCallBack();
+	RegisterCallBack();
 	
 	// 获取指定进程模块
 	// ULONG64 addr = RwGetModuleHandle64(1192, "kernel32.dll");
@@ -71,6 +71,6 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
 	// DbgPrint("addr: %llx", addr);
 
     // 根据不同操作系统版本调用对应函数
-    GetVersion();
+    // GetVersion();
 	return STATUS_SUCCESS;
 }

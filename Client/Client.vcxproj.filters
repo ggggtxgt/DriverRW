@@ -21,6 +21,9 @@
     <ClCompile Include="LoadDriver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Callback.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header.h">
@@ -30,6 +33,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Callback.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

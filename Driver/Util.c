@@ -94,6 +94,8 @@ NTSTATUS DispatchCallbackEntry(PMESSAGE_PACKAGE message) {
             break;
         }
         case 2: {
+            PRWMM rwmm = (PRWMM)message->data;
+            status = RwQueryVirtualMemory(rwmm->pid, rwmm->start, rwmm->dest);
             break;
         }
 

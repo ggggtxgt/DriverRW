@@ -141,10 +141,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Callback.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="LoadDriver.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Callback.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="LoadDriver.h" />
     <ClInclude Include="resource.h" />
