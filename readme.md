@@ -28,4 +28,5 @@
 - [‌﻿‌‬﻿‬﻿⁠‬⁠‬⁠⁠‌‬‌‌﻿‍‬⁠‬‬⁠20加载驱动文件 - 飞书云文档](https://my.feishu.cn/docx/OjVDdUjAAo4NYWx9EpMc4AKEn8A)
 - [‌‌‌‬‍‍‬‌﻿⁠‌‍‬﻿‬﻿⁠﻿‬‌‌‍﻿‬‬⁠﻿⁠﻿21内存属性查询 - 飞书云文档](https://my.feishu.cn/docx/UYEDdtQQNoHCO7xNwqfcqUdrnmb)
 - [‌﻿‬‬﻿⁠‌﻿﻿‍‌‍‍⁠‌‬‍‌‬‌22三环触发属性查询 - 飞书云文档](https://my.feishu.cn/docx/CNb8drOmQo2hXFxEi5ncL8Kvn9B)
+- [‌﻿⁠﻿‬‍‌‍‬‌‍‌﻿‌﻿‬‌‬‬‬﻿‌﻿‌‌‬⁠23注册回调实现进程保护 - 飞书云文档](https://my.feishu.cn/docx/ZRx0dZwr9oYIwyxK5QUc6Y5EnvB)
 

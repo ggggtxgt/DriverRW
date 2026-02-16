@@ -9,6 +9,7 @@
 void DriverUnload(PDRIVER_OBJECT pDriver) {
 	DbgPrint("DriverUnload!!!");
 	// UnRegisterCallback();
+    ObUnRegister();
 }
 
 #include <ntddk.h>  // 包含 RtlGetVersion 等内核函数
@@ -72,5 +73,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
 
     // 根据不同操作系统版本调用对应函数
     // GetVersion();
+    NTSTATUS status = ProcessProtected(pDriver);
+    if (STATUS_SUCCESS == status) DbgPrint("注册回调实现进程保护成功!!!");
 	return STATUS_SUCCESS;
 }
