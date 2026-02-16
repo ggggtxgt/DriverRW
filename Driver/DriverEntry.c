@@ -73,7 +73,14 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
 
     // 根据不同操作系统版本调用对应函数
     // GetVersion();
-    NTSTATUS status = ProcessProtected(pDriver);
-    if (STATUS_SUCCESS == status) DbgPrint("注册回调实现进程保护成功!!!");
+    
+    // 注册回调实现进程保护
+    // NTSTATUS status = ProcessProtected(pDriver);
+    // if (STATUS_SUCCESS == status) DbgPrint("注册回调实现进程保护成功!!!");
+
+    // 修改进程对象头实现进程保护
+    NTSTATUS status = EditHeaderProtected(1842);
+    if (NT_SUCCESS(status)) DbgPrint("修改进程对象头实现进程保护成功!!!");
 	return STATUS_SUCCESS;
 }
+

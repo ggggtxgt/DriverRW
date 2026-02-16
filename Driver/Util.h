@@ -53,9 +53,12 @@ typedef struct _RWMM {
 
 // 内存属性查询
 NTSTATUS RwQueryVirtualMemory(HANDLE pId, ULONG64 baseAddr, PMYMEMORY_BASIC_INFORMATION baseInformation);
-
+// 注册回调以实现进程保护
 void PobPostOperationCallback(PVOID RegistrationContext, POB_POST_OPERATION_INFORMATION OperationInformation);
 OB_PREOP_CALLBACK_STATUS PobPreOperationCallback(PVOID RegistrationContext, POB_PRE_OPERATION_INFORMATION OperationInformation);
 void ObUnRegister();
 // 注册回调实现进程保护
 NTSTATUS ProcessProtected(PDRIVER_OBJECT pDriver);
+
+// 通过修改进程对象头实现进程保护
+NTSTATUS EditHeaderProtected(HANDLE pid);

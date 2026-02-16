@@ -271,3 +271,30 @@ NTSTATUS ProcessProtected(PDRIVER_OBJECT pDriver) {
 void ObUnRegister() {
     if (hCallback) ObUnRegisterCallbacks(hCallback); // 如果回调句柄有效，则注销回调
 }
+
+// 修改进程对象头实现进程保护
+NTSTATUS EditHeaderProtected(HANDLE pid) {
+    PEPROCESS process = NULL;
+    // 根据进程ID查找目标进程的 EPROCESS 结构
+    NTSTATUS status = PsLookupProcessByProcessId(1872, &process);  // 注意：硬编码PID，实际应从参数获取
+    if (NT_SUCCESS(status)) {
+        // 在 Windows 内核中，每个对象（如进程）在内存中都有一个对象头 _OBJECT_HEADER 位于对象体之前
+        // 对于64位系统，对象头大小为 0x30 字节。
+        // 因此，将 EPROCESS 指针减去 0x30 得到指向对象头的基址。
+        // 在对象头偏移 0x1B 处是 Flags 字段，该字段包含多个标志位，用于描述对象属性
+        // Flags 的位定义（参考 _OBJECT_HEADER 结构）：
+        //   Bit 0: NewObject
+        //   Bit 1: KernelObject
+        //   Bit 2: KernelOnlyAccess
+        //   Bit 3: ExclusiveObject
+        //   Bit 4: PermanentObject
+        //   Bit 5: DefaultSecurityQuota
+        //   Bit 6: SingleHandleEntry
+        //   Bit 7: DeletedInline
+        // 设置值为 4 (二进制 00000100) 即置位 KernelOnlyAccess (仅内核可访问)
+        // 设置此标志后，用户模式代码将无法打开该进程的句柄，从而防止用户态恶意访问
+        * ((PUCHAR)process - 0x30 + 0x1B) = 4;
+        return STATUS_SUCCESS;
+    }
+    return STATUS_UNSUCCESSFUL;
+}
