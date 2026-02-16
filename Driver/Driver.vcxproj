@@ -154,6 +154,7 @@
     <ClInclude Include="KernelAPI.h" />
     <ClInclude Include="MemRW.h" />
     <ClInclude Include="RwGetModule.h" />
+    <ClInclude Include="Struct.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

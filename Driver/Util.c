@@ -160,3 +160,56 @@ VOID UnRegisterCallback() {
         uCallBack[1] = OldQueryCallback;    // 恢复查询回调
     }
 }
+
+// 内存属性查询：查询指定进程中某个虚拟地址的内存基本信息
+NTSTATUS RwQueryVirtualMemory(HANDLE pId, ULONG64 baseAddr, PMYMEMORY_BASIC_INFORMATION baseInformation) {
+    // 参数检查：输出缓冲区不能为空
+    NTSTATUS state = STATUS_SUCCESS;
+    if (NULL == baseInformation) return STATUS_INVALID_PARAMETER;
+
+    PEPROCESS process = NULL;
+    // 根据进程ID获取EPROCESS内核对象
+    state = PsLookupProcessByProcessId(pId, &process);
+    if (!NT_SUCCESS(state)) return state;
+
+    KAPC_STATE apcState = { 0 };
+    // 附加到目标进程的地址空间，以便直接使用当前进程句柄调用 ZwQueryVirtualMemory
+    KeStackAttachProcess(process, &apcState);
+
+    // 分配内核非分页内存用于接收标准 MEMORY_BASIC_INFORMATION 结构
+    PMEMORY_BASIC_INFORMATION information = ExAllocatePool(NonPagedPool, sizeof(MEMORY_BASIC_INFORMATION));
+    if (NULL == information) {
+        // 内存分配失败，先脱离进程再返回
+        KeUnstackDetachProcess(&apcState);
+        return STATUS_UNSUCCESSFUL;
+    }
+
+    // 清空分配的内存
+    memset(information, 0, sizeof(MEMORY_BASIC_INFORMATION));
+
+    SIZE_T realSize = 0;
+    // 调用 ZwQueryVirtualMemory 查询当前进程（已挂靠为目标进程）的虚拟内存信息
+    // NtCurrentProcess() 返回当前进程的伪句柄，在挂靠状态下实际查询的是目标进程
+    state = ZwQueryVirtualMemory(NtCurrentProcess(), baseAddr, MemoryBasicInformation,
+                                 information, sizeof(MEMORY_BASIC_INFORMATION), &realSize);
+
+    // 脱离目标进程地址空间（无论查询是否成功都需要脱离）
+    KeUnstackDetachProcess(&apcState);
+
+    if (NT_SUCCESS(state)) {
+        // 将标准结构的数据复制到自定义结构 baseInformation 中
+        // 注意字段映射：标准结构中为 RegionSize，自定义中为 ReginSize（拼写稍异）
+        baseInformation->AllocationBase = information->AllocationBase;
+        baseInformation->AllocationProtect = information->AllocationProtect;
+        baseInformation->BaseAddress = information->BaseAddress;
+        baseInformation->Protect = information->Protect;
+        baseInformation->RegionSize = information->RegionSize;
+        baseInformation->State = information->State;
+        baseInformation->Type = information->Type;
+    }
+
+    // 释放 EPROCESS 引用和分配的内存
+    ObDereferenceObject(process);
+    ExFreePool(information);
+    return state;
+}

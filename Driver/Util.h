@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ntifs.h>
+#include "Struct.h"
 
 /********************************************************************************************************************
  * @brief   自定义属性信息回调函数类型：
@@ -49,3 +50,6 @@ typedef struct _RWMM {
     ULONG64 size;   // 读取的大小
     ULONG64 dest;   // 存储已读取内存的缓冲区
 } RWMM, * PRWMM;
+
+// 内存属性查询
+NTSTATUS RwQueryVirtualMemory(HANDLE pId, ULONG64 baseAddr, PMYMEMORY_BASIC_INFORMATION baseInformation);

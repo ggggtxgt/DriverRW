@@ -26,4 +26,5 @@
 - [‌‌⁠‌⁠‌‌‍‌﻿‬⁠‌‬⁠⁠‌﻿‌‬‌‍﻿⁠⁠‬‍⁠⁠18操作系统版本 - 飞书云文档](https://my.feishu.cn/docx/Dq3fdh1ctoXjRXxcqmLcbh3Znpg)
 - [‌﻿‬‍‍⁠‌⁠﻿‌⁠‍‍﻿‌‌⁠‬﻿⁠‍‌‬19实现驱动加载 - 飞书云文档](https://my.feishu.cn/docx/K7v7dTAT7oaKNxx8k3QcaGZ5nwg)
 - [‌﻿‌‬﻿‬﻿⁠‬⁠‬⁠⁠‌‬‌‌﻿‍‬⁠‬‬⁠20加载驱动文件 - 飞书云文档](https://my.feishu.cn/docx/OjVDdUjAAo4NYWx9EpMc4AKEn8A)
+- [‌‌‌‬‍‍‬‌﻿⁠‌‍‬﻿‬﻿⁠﻿‬‌‌‍﻿‬‬⁠﻿⁠﻿21内存属性查询 - 飞书云文档](https://my.feishu.cn/docx/UYEDdtQQNoHCO7xNwqfcqUdrnmb)
 
