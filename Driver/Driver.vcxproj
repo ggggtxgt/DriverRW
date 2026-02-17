@@ -146,6 +146,7 @@
     <ClCompile Include="MemRW.c" />
     <ClCompile Include="RwGetModule.c" />
     <ClCompile Include="RwProtected.c" />
+    <ClCompile Include="ThreadHijack.c" />
     <ClCompile Include="Util.c" />
     <ClCompile Include="DriverEntry.c" />
   </ItemGroup>
@@ -156,6 +157,7 @@
     <ClInclude Include="RwGetModule.h" />
     <ClInclude Include="RwProtected.h" />
     <ClInclude Include="Struct.h" />
+    <ClInclude Include="ThreadJijack.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

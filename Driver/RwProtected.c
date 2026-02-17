@@ -14,10 +14,6 @@ OB_PREOP_CALLBACK_STATUS PobPreOperationCallback(PVOID RegistrationContext, POB_
     return OB_PREOP_SUCCESS;
 }
 
-// 定义未文档化的函数指针类型，用于挂起和恢复线程（此处未使用）
-typedef NTSTATUS(*_PsSuspendThread)(IN PETHREAD Thread, OUT PULONG PreviousSuspendCount);
-typedef NTSTATUS(*_PsResumeThread)(IN PETHREAD Thread, OUT PULONG PreviousSuspendCount OPTIONAL);
-
 // 后操作回调函数：在创建或复制句柄之后被调用（此处为空，不执行任何操作）
 void PobPostOperationCallback(PVOID RegistrationContext, POB_POST_OPERATION_INFORMATION OperationInformation) {
 

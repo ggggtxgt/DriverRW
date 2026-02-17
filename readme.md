@@ -31,4 +31,5 @@
 - [‌﻿⁠﻿‬‍‌‍‬‌‍‌﻿‌﻿‬‌‬‬‬﻿‌﻿‌‌‬⁠23注册回调实现进程保护 - 飞书云文档](https://my.feishu.cn/docx/ZRx0dZwr9oYIwyxK5QUc6Y5EnvB)
 - [‌‌‌‬⁠⁠﻿﻿‍⁠⁠‍‍⁠‍⁠‍‍24修改进程头实现进程保护 - 飞书云文档](https://my.feishu.cn/docx/MfKfdYz78oqbslxIo6WcEwlOnzc)
 - [‌‍‬‍‬‌⁠⁠⁠⁠‌‬⁠‬‬‬﻿﻿﻿‌‍‍‍⁠⁠⁠‌⁠‍25隐藏回调保护 - 飞书云文档](https://my.feishu.cn/docx/Ddh3dQteFoy2C3xiRRacgZQfnqd)
+- [‌﻿﻿‍‬⁠⁠‬‬﻿‍⁠⁠⁠‬‍⁠‍‌‍‬⁠‍‌‍﻿‍﻿26驱动层线程劫持(一) - 飞书云文档](https://my.feishu.cn/docx/CGMSdHxmVoXXFGxZt4dcqo78nvd)
 
