@@ -33,4 +33,5 @@
 - [‌‍‬‍‬‌⁠⁠⁠⁠‌‬⁠‬‬‬﻿﻿﻿‌‍‍‍⁠⁠⁠‌⁠‍25隐藏回调保护 - 飞书云文档](https://my.feishu.cn/docx/Ddh3dQteFoy2C3xiRRacgZQfnqd)
 - [‌﻿﻿‍‬⁠⁠‬‬﻿‍⁠⁠⁠‬‍⁠‍‌‍‬⁠‍‌‍﻿‍﻿26驱动层线程劫持(一) - 飞书云文档](https://my.feishu.cn/docx/CGMSdHxmVoXXFGxZt4dcqo78nvd)
 - [⁠⁠‬‌‬‬‍‬‌‌‌﻿⁠‬‬⁠‌⁠‌﻿27驱动层线程劫持(二) - 飞书云文档](https://my.feishu.cn/docx/EYU0d7t7coIskKxMOI3c8wCLnBg)
+- [‍⁠‬⁠‌⁠⁠‍‌‍‌‌﻿⁠‌⁠﻿‬28进程/线程/模块创建 - 飞书云文档](https://my.feishu.cn/docx/HZ8RdWOVSoJFnaxxq6YcTgyjnUb)
 

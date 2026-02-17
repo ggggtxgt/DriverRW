@@ -3,16 +3,6 @@
 #include "RwProtected.h"
 #include "GetModuleUitl.h"
 
-/********************************************************************************************************************
- * @brief   驱动卸载回调函数：当驱动被卸载时，系统自动启用该函数；
- * @param   驱动对象的结构体指针；
-********************************************************************************************************************/
-void DriverUnload(PDRIVER_OBJECT pDriver) {
-	DbgPrint("DriverUnload!!!");
-	// UnRegisterCallback();
-    ObUnRegister();
-}
-
 #include <ntddk.h>  // 包含 RtlGetVersion 等内核函数
 
 // 声明不同版本对应的回调函数（需根据实际需求定义）
@@ -46,6 +36,53 @@ VOID GetVersion(VOID) {
             version.dwMajorVersion, version.dwMinorVersion, version.dwBuildNumber);
         // 可选择默认处理或忽略
     }
+}
+
+VOID processCreateFileter(_In_ HANDLE ParentId, _In_ HANDLE ProcessId, _In_ BOOLEAN Create) {
+    if (Create) {
+        DbgPrint("进程已创建!");
+    }
+    else {
+        DbgPrint("进程已销毁!");
+    }
+}
+
+VOID threadCreateFilter(_In_ HANDLE ProcessId, _In_ HANDLE ThreadId, _In_ BOOLEAN Create) {
+    if (Create) {
+        DbgPrint("线程已创建!");
+    }
+    else {
+        DbgPrint("线程已销毁!");
+    }
+}
+
+VOID loadImageFilter(_In_opt_ PUNICODE_STRING FullImageName, _In_ HANDLE ProcessId, _In_ PIMAGE_INFO ImageInfo) {
+    DbgPrint("已有模块加载!");
+}
+
+VOID cancelProcess() {
+    PsSetCreateProcessNotifyRoutine(processCreateFileter, TRUE);
+}
+
+VOID cancelThread() {
+    PsSetCreateProcessNotifyRoutine(threadCreateFilter, TRUE);
+}
+
+VOID cancelImage() {
+    PsSetCreateProcessNotifyRoutine(loadImageFilter, TRUE);
+}
+
+/********************************************************************************************************************
+ * @brief   驱动卸载回调函数：当驱动被卸载时，系统自动启用该函数；
+ * @param   驱动对象的结构体指针；
+********************************************************************************************************************/
+void DriverUnload(PDRIVER_OBJECT pDriver) {
+    DbgPrint("DriverUnload!!!");
+    // UnRegisterCallback();
+    // ObUnRegister();
+    cancelProcess();
+    cancelThread();
+    cancelImage();
 }
 
 /********************************************************************************************************************
@@ -83,8 +120,20 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
     // NTSTATUS status = EditHeaderProtected(1842);
     // if (NT_SUCCESS(status)) DbgPrint("修改进程对象头实现进程保护成功!!!");
 
-    // 隐藏回调保护
+    // 创建进程
+    NTSTATUS state = PsSetCreateProcessNotifyRoutine(processCreateFileter, FALSE);
+    if (NT_SUCCESS(state)) DbgPrint("注册系统回调成功!\n");
+    else DbgPrint("注册系统回调失败!");
+
+    // 创建线程
+    state = PsSetCreateThreadNotifyRoutine(threadCreateFilter);
+    if (NT_SUCCESS(state)) DbgPrint("注册系统回调成功!\n");
+    else DbgPrint("注册系统回调失败!");
+
+    // 模块
+    state = PsSetLoadImageNotifyRoutine(loadImageFilter);
+    if (NT_SUCCESS(state)) DbgPrint("注册系统回调成功!\n");
+    else DbgPrint("注册系统回调失败!");
 
 	return STATUS_SUCCESS;
 }
-
