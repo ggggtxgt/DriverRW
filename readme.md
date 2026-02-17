@@ -30,4 +30,5 @@
 - [‌﻿‬‬﻿⁠‌﻿﻿‍‌‍‍⁠‌‬‍‌‬‌22三环触发属性查询 - 飞书云文档](https://my.feishu.cn/docx/CNb8drOmQo2hXFxEi5ncL8Kvn9B)
 - [‌﻿⁠﻿‬‍‌‍‬‌‍‌﻿‌﻿‬‌‬‬‬﻿‌﻿‌‌‬⁠23注册回调实现进程保护 - 飞书云文档](https://my.feishu.cn/docx/ZRx0dZwr9oYIwyxK5QUc6Y5EnvB)
 - [‌‌‌‬⁠⁠﻿﻿‍⁠⁠‍‍⁠‍⁠‍‍24修改进程头实现进程保护 - 飞书云文档](https://my.feishu.cn/docx/MfKfdYz78oqbslxIo6WcEwlOnzc)
+- [‌‍‬‍‬‌⁠⁠⁠⁠‌‬⁠‬‬‬﻿﻿﻿‌‍‍‍⁠⁠⁠‌⁠‍25隐藏回调保护 - 飞书云文档](https://my.feishu.cn/docx/Ddh3dQteFoy2C3xiRRacgZQfnqd)
 

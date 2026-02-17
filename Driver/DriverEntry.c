@@ -1,5 +1,6 @@
 #include "Util.h"
 #include "RwGetModule.h"
+#include "RwProtected.h"
 #include "GetModuleUitl.h"
 
 /********************************************************************************************************************
@@ -79,8 +80,11 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath) {
     // if (STATUS_SUCCESS == status) DbgPrint("注册回调实现进程保护成功!!!");
 
     // 修改进程对象头实现进程保护
-    NTSTATUS status = EditHeaderProtected(1842);
-    if (NT_SUCCESS(status)) DbgPrint("修改进程对象头实现进程保护成功!!!");
+    // NTSTATUS status = EditHeaderProtected(1842);
+    // if (NT_SUCCESS(status)) DbgPrint("修改进程对象头实现进程保护成功!!!");
+
+    // 隐藏回调保护
+
 	return STATUS_SUCCESS;
 }
 
